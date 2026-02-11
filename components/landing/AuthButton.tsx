@@ -20,7 +20,6 @@ export default function AuthModal() {
         <DialogTrigger asChild>
           <Button size="lg" className="dark">Get Started</Button>
         </DialogTrigger>
-
         <DialogContent className="sm:max-w-106.25">
           <DialogHeader>
             <DialogTitle>Sign In</DialogTitle>
@@ -39,7 +38,6 @@ export default function AuthModal() {
               <Input id="password" type="password" placeholder="********" />
             </Field>
           </FieldGroup>
-
           <DialogFooter>
             <DialogClose asChild>
               <Button>Cancel</Button>
