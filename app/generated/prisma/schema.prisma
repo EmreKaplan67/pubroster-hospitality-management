@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  company       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  staffs        Staff[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+enum StaffRole {
+  MANAGER
+  ASSISTANT_MANAGER
+  SUPERVISOR
+  BARTENDER
+  FLOOR_STAFF
+  BAR_BACK
+}
+
+enum StaffStatus {
+  ACTIVE
+  INACTIVE
+  ON_VACATION
+  SICK_LEAVE
+  TERMINATED
+}
+
+model Staff {
+  id         String      @id @default(uuid())
+  name       String
+  email      String?
+  phone      String?
+  role       StaffRole   @default(FLOOR_STAFF)
+  status     StaffStatus @default(ACTIVE)
+  hourlyRate Decimal?    @db.Decimal(5, 2)
+  startDate  DateTime?   @db.Date
+
+  emergencyContactName  String?
+  emergencyContactPhone String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  shifts Shift[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, email])
+  @@index([userId])
+}
+
+model Shift {
+  id String @id @default(uuid())
+
+  staffId String
+  staff   Staff  @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  shiftDate DateTime @db.Date
+  startTime DateTime
+  endTime   DateTime
+
+  hours        Decimal @db.Decimal(4, 2)
+  breakMinutes Decimal @db.Decimal(4, 2)
+  color        String? @default("#e5e7eb")
+
+  createdAt DateTime @default(now())
+
+  role StaffRole
+
+  @@index([shiftDate])
+  @@index([staffId, shiftDate])
+}
+
+model PopularShift {
+  id           String   @id @default(uuid())
+  startTime    DateTime
+  endTime      DateTime
+  hours        Decimal  @db.Decimal(4, 2)
+  breakMinutes Decimal  @db.Decimal(4, 2)
+  color        String?  @default("#e5e7eb")
+}

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import AuthModal from "@/components/landing/AuthButton";
+import { AuthButton } from "@/components/auth-button";
 
 export default function Home() {
   return (
@@ -9,7 +9,7 @@ export default function Home() {
         src="/hero-background-image.jpg"
         alt="Hero Background"
         fill
-        className="object-cover "
+        className="object-cover"
       />
 
       {/* Dark overlay */}
@@ -25,8 +25,7 @@ export default function Home() {
           Streamline scheduling, track shifts, and optimize your hospitality
           team’s performance — all in one easy-to-use platform.
         </p>
-
-        <AuthModal />
+        <AuthButton />
       </div>
     </div>
   );
