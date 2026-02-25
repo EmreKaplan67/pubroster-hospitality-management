@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { signInAction } from "@/app/actions/auth";
@@ -16,21 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
-function toFieldErrors(
-  errors: unknown,
-): Array<{ message?: string }> | undefined {
-  if (Array.isArray(errors)) {
-    return errors.map((e) => ({
-      message: typeof e === "string" ? e : String(e),
-    }));
-  }
-  if (typeof errors === "object" && errors !== null && "errors" in errors) {
-    const arr = (errors as { errors: unknown[] }).errors;
-    return Array.isArray(arr)
-      ? arr.map((e) => ({ message: typeof e === "string" ? e : String(e) }))
-      : undefined;
-  }
-  return undefined;
+function fieldErrors(messages?: string[]) {
+  return messages?.map((m) => ({ message: m }));
 }
 
 function SignInSubmitButton() {
@@ -44,38 +31,30 @@ function SignInSubmitButton() {
 
 export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
   const router = useRouter();
-  const [state, formAction] = useActionState(
-    async (_: unknown, formData: FormData) => {
-      const result = await signInAction(formData);
-      if (result.success) {
-        toast.success("Signed in successfully");
-        onSuccess?.();
-        router.push("/dashboard");
-        return { success: true } as const;
-      }
-      return result;
-    },
-    null as
-      | { success: true }
-      | { success: false; error: Record<string, unknown> }
-      | null,
-  );
+  const handled = useRef(false);
+  const [state, formAction] = useActionState(signInAction, null);
 
-  const formErrors =
-    state && !("success" in state && state.success) ? state.error : undefined;
-  const fieldErrors = formErrors as
-    | Record<string, { errors?: string[] } | string[] | undefined>
-    | undefined;
+  useEffect(() => {
+    if (state?.success && !handled.current) {
+      handled.current = true;
+      toast.success("Signed in successfully");
+      onSuccess?.();
+      router.push("/dashboard");
+    }
+    if (!state?.success) handled.current = false;
+  }, [state, onSuccess, router]);
+
+  const errors = state?.success === false ? state.errors : undefined;
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <FieldSet>
         <FieldGroup>
-          {Array.isArray(fieldErrors?._form) && (
+          {errors?._form?.length ? (
             <div role="alert" className="text-destructive text-sm">
-              {fieldErrors._form.join(" ")}
+              {errors._form.join(" ")}
             </div>
-          )}
+          ) : null}
           <Field>
             <FieldLabel htmlFor="signin-email">Email</FieldLabel>
             <Input
@@ -85,14 +64,9 @@ export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
               placeholder="you@example.com"
               autoComplete="email"
               required
-              aria-invalid={!!fieldErrors?.email}
+              aria-invalid={!!errors?.email?.length}
             />
-            <FieldError
-              errors={toFieldErrors(
-                (fieldErrors?.email as { errors?: string[] })?.errors ??
-                  fieldErrors?.email,
-              )}
-            />
+            <FieldError errors={fieldErrors(errors?.email)} />
           </Field>
           <Field>
             <FieldLabel htmlFor="signin-password">Password</FieldLabel>
@@ -102,14 +76,9 @@ export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
               autoComplete="current-password"
               placeholder="********"
               required
-              aria-invalid={!!fieldErrors?.password}
+              aria-invalid={!!errors?.password?.length}
             />
-            <FieldError
-              errors={toFieldErrors(
-                (fieldErrors?.password as { errors?: string[] })?.errors ??
-                  fieldErrors?.password,
-              )}
-            />
+            <FieldError errors={fieldErrors(errors?.password)} />
           </Field>
         </FieldGroup>
       </FieldSet>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
@@ -16,17 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
-function toFieldErrors(errors: unknown): Array<{ message?: string }> | undefined {
-  if (Array.isArray(errors)) {
-    return errors.map((e) => ({ message: typeof e === "string" ? e : String(e) }));
-  }
-  if (typeof errors === "object" && errors !== null && "errors" in errors) {
-    const arr = (errors as { errors: unknown[] }).errors;
-    return Array.isArray(arr)
-      ? arr.map((e) => ({ message: typeof e === "string" ? e : String(e) }))
-      : undefined;
-  }
-  return undefined;
+function fieldErrors(messages?: string[]) {
+  return messages?.map((m) => ({ message: m }));
 }
 
 function SignUpSubmitButton() {
@@ -40,32 +31,30 @@ function SignUpSubmitButton() {
 
 export function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
   const router = useRouter();
-  const [state, formAction] = useActionState(
-    async (_: unknown, formData: FormData) => {
-      const result = await signUpAction(formData);
-      if (result.success) {
-        toast.success("Account created successfully");
-        onSuccess?.();
-        router.push("/dashboard");
-        return { success: true } as const;
-      }
-      return result;
-    },
-    null as { success: true } | { success: false; error: Record<string, unknown> } | null
-  );
+  const handled = useRef(false);
+  const [state, formAction] = useActionState(signUpAction, null);
 
-  const formErrors = state && !("success" in state && state.success) ? state.error : undefined;
-  const fieldErrors = formErrors as Record<string, { errors?: string[] } | string[] | undefined> | undefined;
+  useEffect(() => {
+    if (state?.success && !handled.current) {
+      handled.current = true;
+      toast.success("Account created successfully");
+      onSuccess?.();
+      router.push("/dashboard");
+    }
+    if (!state?.success) handled.current = false;
+  }, [state, onSuccess, router]);
+
+  const errors = state?.success === false ? state.errors : undefined;
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <FieldSet>
         <FieldGroup>
-          {Array.isArray(fieldErrors?._form) && (
+          {errors?._form?.length ? (
             <div role="alert" className="text-destructive text-sm mb-2">
-              {fieldErrors._form.join(" ")}
+              {errors._form.join(" ")}
             </div>
-          )}
+          ) : null}
           <Field>
             <FieldLabel htmlFor="signup-name">Name</FieldLabel>
             <Input
@@ -75,13 +64,9 @@ export function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
               placeholder="John Doe"
               autoComplete="name"
               required
-              aria-invalid={!!fieldErrors?.name}
+              aria-invalid={!!errors?.name?.length}
             />
-            <FieldError
-              errors={toFieldErrors(
-                (fieldErrors?.name as { errors?: string[] })?.errors ?? fieldErrors?.name
-              )}
-            />
+            <FieldError errors={fieldErrors(errors?.name)} />
           </Field>
           <Field>
             <FieldLabel htmlFor="signup-email">Email</FieldLabel>
@@ -92,13 +77,9 @@ export function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
               placeholder="you@example.com"
               autoComplete="email"
               required
-              aria-invalid={!!fieldErrors?.email}
+              aria-invalid={!!errors?.email?.length}
             />
-            <FieldError
-              errors={toFieldErrors(
-                (fieldErrors?.email as { errors?: string[] })?.errors ?? fieldErrors?.email
-              )}
-            />
+            <FieldError errors={fieldErrors(errors?.email)} />
           </Field>
           <Field>
             <FieldLabel htmlFor="signup-company">Company (optional)</FieldLabel>
@@ -108,13 +89,9 @@ export function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
               type="text"
               placeholder="Acme Inc"
               autoComplete="organization"
-              aria-invalid={!!fieldErrors?.company}
+              aria-invalid={!!errors?.company?.length}
             />
-            <FieldError
-              errors={toFieldErrors(
-                (fieldErrors?.company as { errors?: string[] })?.errors ?? fieldErrors?.company
-              )}
-            />
+            <FieldError errors={fieldErrors(errors?.company)} />
           </Field>
           <Field>
             <FieldLabel htmlFor="signup-password">Password</FieldLabel>
@@ -124,13 +101,9 @@ export function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
               placeholder="At least 6 characters"
               autoComplete="new-password"
               required
-              aria-invalid={!!fieldErrors?.password}
+              aria-invalid={!!errors?.password?.length}
             />
-            <FieldError
-              errors={toFieldErrors(
-                (fieldErrors?.password as { errors?: string[] })?.errors ?? fieldErrors?.password
-              )}
-            />
+            <FieldError errors={fieldErrors(errors?.password)} />
           </Field>
           <Field>
             <FieldLabel htmlFor="signup-confirmPassword">Confirm password</FieldLabel>
@@ -140,13 +113,9 @@ export function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
               placeholder="Confirm your password"
               autoComplete="new-password"
               required
-              aria-invalid={!!fieldErrors?.confirmPassword}
+              aria-invalid={!!errors?.confirmPassword?.length}
             />
-            <FieldError
-              errors={toFieldErrors(
-                (fieldErrors?.confirmPassword as { errors?: string[] })?.errors ?? fieldErrors?.confirmPassword
-              )}
-            />
+            <FieldError errors={fieldErrors(errors?.confirmPassword)} />
           </Field>
         </FieldGroup>
       </FieldSet>

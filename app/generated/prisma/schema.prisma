@@ -11,17 +11,18 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  company       String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  staffs        Staff[]
+  id               String            @id
+  name             String
+  email            String
+  emailVerified    Boolean           @default(false)
+  image            String?
+  company          String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  sessions         Session[]
+  accounts         Account[]
+  staffs           Staff[]
+  publishedRosters PublishedRoster[]
 
   @@unique([email])
   @@map("user")
@@ -105,6 +106,8 @@ model Staff {
   emergencyContactName  String?
   emergencyContactPhone String?
 
+  displayOrder Int @default(0)
+
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -128,7 +131,7 @@ model Shift {
   endTime   DateTime
 
   hours        Decimal @db.Decimal(4, 2)
-  breakMinutes Decimal @db.Decimal(4, 2)
+  breakMinutes Decimal @db.Decimal(5, 2)
   color        String? @default("#e5e7eb")
 
   createdAt DateTime @default(now())
@@ -144,6 +147,18 @@ model PopularShift {
   startTime    DateTime
   endTime      DateTime
   hours        Decimal  @db.Decimal(4, 2)
-  breakMinutes Decimal  @db.Decimal(4, 2)
+  breakMinutes Decimal  @db.Decimal(5, 2)
   color        String?  @default("#e5e7eb")
+}
+
+model PublishedRoster {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weekStart DateTime @db.Date
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, weekStart])
+  @@index([userId])
 }

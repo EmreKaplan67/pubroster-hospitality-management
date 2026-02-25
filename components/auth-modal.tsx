@@ -36,7 +36,7 @@ export function AuthModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-[min(28rem,calc(100vw-2rem))]">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[25rem]">
         <DialogHeader>
           <DialogTitle>{mode === "sign-in" ? "Sign in" : "Create an account"}</DialogTitle>
           <DialogDescription>

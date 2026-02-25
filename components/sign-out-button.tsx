@@ -1,22 +1,25 @@
 "use client";
 
-import { useFormStatus } from "react-dom";
-import { signOutAction } from "@/app/actions/auth";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 
-function SignOutSubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" variant="outline" disabled={pending} className="text-black hover:bg-transparent hover:text-white">
-      {pending ? "Signing out..." : "Sign Out"}
-    </Button>
-  );
-}
-
 export function SignOutButton() {
+  const router = useRouter();
+
+  async function handleSignOut() {
+    await authClient.signOut();
+    router.push("/");
+  }
+
   return (
-    <form action={signOutAction}>
-      <SignOutSubmitButton />
-    </form>
+    <Button
+      type="button"
+      variant="outline"
+      onClick={handleSignOut}
+      className="text-black hover:bg-transparent hover:text-white"
+    >
+      Sign Out
+    </Button>
   );
 }

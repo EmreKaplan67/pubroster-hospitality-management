@@ -4,7 +4,9 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
+import { POPULAR_SHIFT_COLORS } from "@/lib/popular-shift-colors";
 import { revalidatePath } from "next/cache";
+import { getWeekStart } from "@/lib/schedule-week";
 
 const DAYS = [
   "Monday",
@@ -49,6 +51,25 @@ function getDateForDay(weekStart: string, dayOfWeek: string): Date {
   return date;
 }
 
+async function checkRosterNotPublished(
+  userId: string,
+  weekStart: string
+): Promise<{ blocked: true; error: string } | { blocked: false }> {
+  const weekDate = new Date(weekStart + "T12:00:00");
+  const published = await prisma.publishedRoster.findUnique({
+    where: {
+      userId_weekStart: { userId, weekStart: weekDate },
+    },
+  });
+  if (published) {
+    return {
+      blocked: true,
+      error: "This roster is published. Click 'Edit roster' to unpublish before making changes.",
+    };
+  }
+  return { blocked: false };
+}
+
 export async function assignShiftAction(
   data: {
     staffId: string;
@@ -78,6 +99,9 @@ export async function assignShiftAction(
   }
 
   const { staffId, popularShiftId, weekStart, dayOfWeek, startTimeStr, endTimeStr } = parsed.data;
+
+  const publishedCheck = await checkRosterNotPublished(session.user.id, weekStart);
+  if (publishedCheck.blocked) return { success: false, error: publishedCheck.error };
 
   const staff = await prisma.staff.findFirst({
     where: { id: staffId, userId: session.user.id },
@@ -217,6 +241,9 @@ export async function createShiftDirectAction(
 
   const { staffId, weekStart, dayOfWeek, startTimeStr, endTimeStr, breakMinutes, hours } = parsed.data;
 
+  const publishedCheck = await checkRosterNotPublished(session.user.id, weekStart);
+  if (publishedCheck.blocked) return { success: false, error: publishedCheck.error };
+
   const staff = await prisma.staff.findFirst({
     where: { id: staffId, userId: session.user.id },
   });
@@ -322,6 +349,9 @@ export async function moveShiftAction(
     return { success: false, error: "Shift not found" };
   }
 
+  const publishedCheck = await checkRosterNotPublished(session.user.id, weekStart);
+  if (publishedCheck.blocked) return { success: false, error: publishedCheck.error };
+
   const newStaff = await prisma.staff.findFirst({
     where: { id: newStaffId, userId: session.user.id },
   });
@@ -411,6 +441,10 @@ export async function removeShiftAction(shiftId: string): Promise<RemoveShiftRes
     return { success: false, error: "Shift not found" };
   }
 
+  const weekStart = getWeekStart(shift.shiftDate);
+  const publishedCheck = await checkRosterNotPublished(session.user.id, weekStart);
+  if (publishedCheck.blocked) return { success: false, error: publishedCheck.error };
+
   try {
     await prisma.shift.delete({
       where: { id: shiftId },
@@ -419,6 +453,113 @@ export async function removeShiftAction(shiftId: string): Promise<RemoveShiftRes
     return { success: true };
   } catch {
     return { success: false, error: "Failed to remove shift" };
+  }
+}
+
+type UpdateShiftResult =
+  | { success: true; shift: { id: string; staffId: string; shiftDate: string; startTime: string; endTime: string; hours: string; breakMinutes: string; color: string } }
+  | { success: false; error: string };
+
+const updateShiftSchema = z.object({
+  shiftId: z.string().uuid(),
+  startTimeStr: timeStrSchema,
+  endTimeStr: timeStrSchema,
+  breakMinutes: z.string().refine(
+    (val) => {
+      const n = parseFloat(val);
+      return !isNaN(n) && VALID_BREAKS.includes(n);
+    },
+    "Break must be 0, 15, 30, 45, 60, 75, 90, or 120 minutes"
+  ),
+  hours: z.string(),
+  color: z.string().optional(),
+});
+
+export async function updateShiftAction(
+  _prevState: UpdateShiftResult | null,
+  formData: FormData
+): Promise<UpdateShiftResult> {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  const entries = Object.fromEntries(formData.entries());
+  const parsed = updateShiftSchema.safeParse(entries);
+
+  if (!parsed.success) {
+    const firstError = parsed.error.issues[0];
+    return {
+      success: false,
+      error: firstError?.message ?? "Validation failed",
+    };
+  }
+
+  const { shiftId, startTimeStr, endTimeStr, breakMinutes, hours, color } = parsed.data;
+
+  const shift = await prisma.shift.findFirst({
+    where: { id: shiftId, staff: { userId: session.user.id } },
+  });
+
+  if (!shift) {
+    return { success: false, error: "Shift not found" };
+  }
+
+  const weekStart = getWeekStart(shift.shiftDate);
+  const publishedCheck = await checkRosterNotPublished(session.user.id, weekStart);
+  if (publishedCheck.blocked) return { success: false, error: publishedCheck.error };
+
+  const [sh, sm] = startTimeStr.split(":").map(Number);
+  const [eh, em] = endTimeStr.split(":").map(Number);
+  const startMins = (sh ?? 0) * 60 + (sm ?? 0);
+  const endMins = (eh ?? 0) * 60 + (em ?? 0);
+  const isOvernight = endMins <= startMins;
+
+  const y = shift.shiftDate.getFullYear();
+  const mo = shift.shiftDate.getMonth();
+  const d = shift.shiftDate.getDate();
+
+  const startTime = new Date(y, mo, d, sh ?? 0, sm ?? 0, 0, 0);
+  const endTime = new Date(y, mo, d + (isOvernight ? 1 : 0), eh ?? 0, em ?? 0, 0, 0);
+  const hoursNum = parseFloat(hours) || 0;
+  const breakMins = parseFloat(breakMinutes) || 0;
+  const validColor =
+    color && (POPULAR_SHIFT_COLORS as readonly string[]).includes(color)
+      ? (color as (typeof POPULAR_SHIFT_COLORS)[number])
+      : undefined;
+
+  try {
+    const updated = await prisma.shift.update({
+      where: { id: shiftId },
+      data: {
+        startTime,
+        endTime,
+        hours: hoursNum,
+        breakMinutes: breakMins,
+        ...(validColor && { color: validColor }),
+      },
+    });
+
+    revalidatePath("/dashboard/schedule");
+
+    return {
+      success: true,
+      shift: {
+        id: updated.id,
+        staffId: updated.staffId,
+        shiftDate: updated.shiftDate.toISOString().slice(0, 10),
+        startTime: updated.startTime.toISOString(),
+        endTime: updated.endTime.toISOString(),
+        hours: updated.hours.toString(),
+        breakMinutes: updated.breakMinutes.toString(),
+        color: updated.color ?? DEFAULT_SHIFT_COLOR,
+      },
+    };
+  } catch {
+    return { success: false, error: "Failed to update shift" };
   }
 }
 
@@ -437,6 +578,9 @@ export async function clearWeekShiftsAction(weekStart: string): Promise<ClearWee
   if (!parsed.success) {
     return { success: false, error: "Invalid week" };
   }
+
+  const publishedCheck = await checkRosterNotPublished(session.user.id, weekStart);
+  if (publishedCheck.blocked) return { success: false, error: publishedCheck.error };
 
   const [y, m, d] = weekStart.split("-").map(Number);
   const monday = new Date(y!, m! - 1, d!, 0, 0, 0, 0);
@@ -458,4 +602,117 @@ export async function clearWeekShiftsAction(weekStart: string): Promise<ClearWee
   } catch {
     return { success: false, error: "Failed to clear shifts" };
   }
+}
+
+type ReplaceRosterShift = {
+  staffId: string;
+  dayOfWeek: (typeof DAYS)[number];
+  startTimeStr: string;
+  endTimeStr: string;
+  hours: string;
+  breakMinutes?: string;
+};
+
+type ReplaceRosterResult = { success: true } | { success: false; error: string };
+
+/** Replace entire week's roster with new shifts. Used by AI agent and revert. */
+export async function replaceRosterAction(
+  weekStart: string,
+  shifts: ReplaceRosterShift[]
+): Promise<ReplaceRosterResult> {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  const weekParsed = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).safeParse(weekStart);
+  if (!weekParsed.success) {
+    return { success: false, error: "Invalid week" };
+  }
+
+  const publishedCheck = await checkRosterNotPublished(session.user.id, weekStart);
+  if (publishedCheck.blocked) return { success: false, error: publishedCheck.error };
+
+  const clearResult = await clearWeekShiftsAction(weekStart);
+  if (!clearResult.success) return clearResult;
+
+  const staffIds = new Set(
+    (
+      await prisma.staff.findMany({
+        where: { userId: session.user.id },
+        select: { id: true },
+      })
+    ).map((s) => s.id)
+  );
+
+  const [y, m, d] = weekStart.split("-").map(Number);
+  const monday = new Date(y!, m! - 1, d!, 0, 0, 0, 0);
+
+  for (const s of shifts) {
+    if (!staffIds.has(s.staffId)) continue;
+    const timeStrRegex = /^\d{1,2}:\d{2}$/;
+    if (
+      !timeStrRegex.test(s.startTimeStr) ||
+      !timeStrRegex.test(s.endTimeStr) ||
+      !DAYS.includes(s.dayOfWeek)
+    )
+      continue;
+
+    const shiftDate = getDateForDay(weekStart, s.dayOfWeek);
+    const [sh, sm] = s.startTimeStr.split(":").map(Number);
+    const [eh, em] = s.endTimeStr.split(":").map(Number);
+    const startMins = (sh ?? 0) * 60 + (sm ?? 0);
+    const endMins = (eh ?? 0) * 60 + (em ?? 0);
+    const isOvernight = endMins <= startMins;
+    const staff = await prisma.staff.findFirst({
+      where: { id: s.staffId, userId: session.user.id },
+    });
+    if (!staff) continue;
+
+    const dateOnly = new Date(shiftDate.getFullYear(), shiftDate.getMonth(), shiftDate.getDate());
+    const startTime = new Date(
+      dateOnly.getFullYear(),
+      dateOnly.getMonth(),
+      dateOnly.getDate(),
+      sh ?? 0,
+      sm ?? 0,
+      0,
+      0
+    );
+    const endTime = new Date(
+      dateOnly.getFullYear(),
+      dateOnly.getMonth(),
+      dateOnly.getDate() + (isOvernight ? 1 : 0),
+      eh ?? 0,
+      em ?? 0,
+      0,
+      0
+    );
+    const hoursNum = parseFloat(s.hours) || 0;
+    const breakMins = Math.min(120, Math.max(0, parseFloat(s.breakMinutes ?? "0") || 0));
+
+    const existing = await prisma.shift.findFirst({
+      where: { staffId: s.staffId, shiftDate: dateOnly },
+    });
+    if (existing) continue;
+
+    await prisma.shift.create({
+      data: {
+        staffId: s.staffId,
+        shiftDate: dateOnly,
+        startTime,
+        endTime,
+        hours: hoursNum,
+        breakMinutes: breakMins,
+        color: DEFAULT_SHIFT_COLOR,
+        role: staff.role,
+      },
+    });
+  }
+
+  revalidatePath("/dashboard/schedule");
+  return { success: true };
 }

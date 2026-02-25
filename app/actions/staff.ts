@@ -111,11 +111,19 @@ export async function createStaffAction(
     }
   }
 
+  const maxOrder = await prisma.staff
+    .aggregate({
+      where: { userId: session.user.id },
+      _max: { displayOrder: true },
+    })
+    .then((r) => (r._max.displayOrder ?? -1) + 1);
+
   try {
     await prisma.staff.create({
       data: {
         user: { connect: { id: session.user.id } },
         name,
+        displayOrder: maxOrder,
         email: emailValue,
         phone: phone || null,
         role: role as "MANAGER" | "ASSISTANT_MANAGER" | "SUPERVISOR" | "BARTENDER" | "FLOOR_STAFF" | "BAR_BACK",
@@ -131,6 +139,48 @@ export async function createStaffAction(
     return { success: false, error: message };
   }
 
+  revalidatePath("/dashboard/staff");
+  return { success: true };
+}
+
+export async function reorderStaffAction(orderedStaffIds: string[]): Promise<StaffResult> {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  if (orderedStaffIds.length === 0) {
+    return { success: true };
+  }
+
+  const userStaff = await prisma.staff.findMany({
+    where: { userId: session.user.id },
+    select: { id: true },
+  });
+  const userStaffIds = new Set(userStaff.map((s) => s.id));
+  const validIds = orderedStaffIds.filter((id) => userStaffIds.has(id));
+  if (validIds.length !== orderedStaffIds.length) {
+    return { success: false, error: "Invalid staff order" };
+  }
+
+  try {
+    await prisma.$transaction(
+      validIds.map((staffId, index) =>
+        prisma.staff.update({
+          where: { id: staffId, userId: session.user.id },
+          data: { displayOrder: index },
+        })
+      )
+    );
+  } catch {
+    return { success: false, error: "Failed to reorder staff" };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/schedule");
   revalidatePath("/dashboard/staff");
   return { success: true };
 }

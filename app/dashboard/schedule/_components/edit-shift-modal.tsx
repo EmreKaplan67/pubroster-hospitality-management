@@ -20,7 +20,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { createShiftDirectAction } from "@/app/actions/shift";
+import { updateShiftAction } from "@/app/actions/shift";
+import { formatTimeForServer } from "./popular-shift-card";
+import { POPULAR_SHIFT_COLORS } from "@/lib/popular-shift-colors";
 
 const HOURS_24 = Array.from({ length: 24 }, (_, i) =>
   i.toString().padStart(2, "0")
@@ -52,42 +54,107 @@ function formatHoursDisplay(decimalHours: number): string {
   return `${h}.${m.toString().padStart(2, "0")}`;
 }
 
+function parseTimeToParts(isoString: string): { hour: string; min: string } {
+  const s = formatTimeForServer(isoString);
+  const [h, m] = s.split(":");
+  return {
+    hour: h?.padStart(2, "0") ?? "00",
+    min: m?.padStart(2, "0") ?? "00",
+  };
+}
+
 const selectClassName =
   "h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none md:text-sm";
 
-type AddShiftToCellModalProps = {
+const DAYS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+] as const;
+
+function getDayFromDate(shiftDate: string, weekStart: string): (typeof DAYS)[number] | null {
+  const start = new Date(weekStart + "T12:00:00").getTime();
+  const date = new Date(shiftDate + "T12:00:00").getTime();
+  const diffDays = Math.round((date - start) / (24 * 60 * 60 * 1000));
+  if (diffDays >= 0 && diffDays < 7) return DAYS[diffDays];
+  return null;
+}
+
+type ShiftData = {
+  id: string;
+  staffId: string;
+  shiftDate: string;
+  startTime: string;
+  endTime: string;
+  hours: string;
+  breakMinutes: string;
+  color?: string;
+};
+
+type EditShiftModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
-  staffId: string;
+  shift: ShiftData;
   staffName: string;
-  day: string;
   weekStart: string;
 };
 
-function AddShiftSubmitButton() {
+function EditShiftSubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Adding..." : "Add Shift"}
+      {pending ? "Saving..." : "Save changes"}
     </Button>
   );
 }
 
-export function AddShiftToCellModal({
+export function EditShiftModal({
   open,
   onOpenChange,
   onSuccess,
-  staffId,
+  shift,
   staffName,
-  day,
   weekStart,
-}: AddShiftToCellModalProps) {
-  const [startHour, setStartHour] = useState("09");
-  const [startMin, setStartMin] = useState("00");
-  const [endHour, setEndHour] = useState("17");
-  const [endMin, setEndMin] = useState("00");
-  const [breakMinutes, setBreakMinutes] = useState("0");
+}: EditShiftModalProps) {
+  const startParts = parseTimeToParts(shift.startTime);
+  const endParts = parseTimeToParts(shift.endTime);
+  const day = getDayFromDate(shift.shiftDate, weekStart);
+
+  const DEFAULT_COLOR = POPULAR_SHIFT_COLORS[0];
+  const [startHour, setStartHour] = useState(startParts.hour);
+  const [startMin, setStartMin] = useState(startParts.min);
+  const [endHour, setEndHour] = useState(endParts.hour);
+  const [endMin, setEndMin] = useState(endParts.min);
+  const [breakMinutes, setBreakMinutes] = useState(
+    String(Math.round(parseFloat(shift.breakMinutes) || 0))
+  );
+  const [color, setColor] = useState<(typeof POPULAR_SHIFT_COLORS)[number]>(
+    shift.color && (POPULAR_SHIFT_COLORS as readonly string[]).includes(shift.color)
+      ? (shift.color as (typeof POPULAR_SHIFT_COLORS)[number])
+      : DEFAULT_COLOR
+  );
+
+  useEffect(() => {
+    if (open) {
+      const s = parseTimeToParts(shift.startTime);
+      const e = parseTimeToParts(shift.endTime);
+      setStartHour(s.hour);
+      setStartMin(s.min);
+      setEndHour(e.hour);
+      setEndMin(e.min);
+      setBreakMinutes(String(Math.round(parseFloat(shift.breakMinutes) || 0)));
+      setColor(
+        shift.color && (POPULAR_SHIFT_COLORS as readonly string[]).includes(shift.color)
+          ? (shift.color as (typeof POPULAR_SHIFT_COLORS)[number])
+          : DEFAULT_COLOR
+      );
+    }
+  }, [open, shift.startTime, shift.endTime, shift.breakMinutes, shift.color]);
 
   const hours = computeHours(
     startHour,
@@ -100,7 +167,7 @@ export function AddShiftToCellModal({
   const endTime = `${endHour}:${endMin}`;
 
   const [state, formAction] = useActionState(
-    createShiftDirectAction as (
+    updateShiftAction as (
       _prev: { success: true; shift?: unknown } | { success: false; error: string } | null,
       formData: FormData
     ) => Promise<{ success: true; shift?: unknown } | { success: false; error: string }>,
@@ -130,20 +197,19 @@ export function AddShiftToCellModal({
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <DialogHeader>
-          <DialogTitle>Add shift</DialogTitle>
+          <DialogTitle>Edit shift</DialogTitle>
           <DialogDescription>
-            Add a shift for {staffName} on {day}. This shift will only be
-            added to the schedule, not to popular shifts.
+            Edit shift for {staffName} on {day ?? shift.shiftDate}.
           </DialogDescription>
         </DialogHeader>
 
         <form action={formAction} className="flex flex-col gap-4">
-          <input type="hidden" name="staffId" value={staffId} />
-          <input type="hidden" name="weekStart" value={weekStart} />
-          <input type="hidden" name="dayOfWeek" value={day} />
+          <input type="hidden" name="shiftId" value={shift.id} />
           <input type="hidden" name="startTimeStr" value={startTime} />
           <input type="hidden" name="endTimeStr" value={endTime} />
+          <input type="hidden" name="breakMinutes" value={breakMinutes} />
           <input type="hidden" name="hours" value={hours.toFixed(2)} />
+          <input type="hidden" name="color" value={color} />
 
           <FieldSet>
             <FieldGroup>
@@ -208,9 +274,9 @@ export function AddShiftToCellModal({
                 </div>
               </Field>
               <Field>
-                <FieldLabel htmlFor="shift-break-minutes">Break</FieldLabel>
+                <FieldLabel htmlFor="edit-shift-break-minutes">Break</FieldLabel>
                 <select
-                  id="shift-break-minutes"
+                  id="edit-shift-break-minutes"
                   name="breakMinutes"
                   value={breakMinutes}
                   onChange={(e) => setBreakMinutes(e.target.value)}
@@ -231,9 +297,29 @@ export function AddShiftToCellModal({
                 </select>
               </Field>
               <Field>
-                <FieldLabel htmlFor="shift-hours">Hours</FieldLabel>
+                <FieldLabel>Color</FieldLabel>
+                <div className="flex flex-wrap gap-2">
+                  {POPULAR_SHIFT_COLORS.map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setColor(c)}
+                      className={`size-8 rounded-full border-2 transition-all ${
+                        color === c
+                          ? "border-foreground scale-110"
+                          : "border-transparent hover:scale-105"
+                      }`}
+                      style={{ backgroundColor: c }}
+                      aria-label={`Select color ${c}`}
+                      aria-pressed={color === c}
+                    />
+                  ))}
+                </div>
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="edit-shift-hours">Hours</FieldLabel>
                 <Input
-                  id="shift-hours"
+                  id="edit-shift-hours"
                   type="text"
                   value={formatHoursDisplay(hours)}
                   readOnly
@@ -253,7 +339,7 @@ export function AddShiftToCellModal({
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <AddShiftSubmitButton />
+            <EditShiftSubmitButton />
           </DialogFooter>
         </form>
       </DialogContent>

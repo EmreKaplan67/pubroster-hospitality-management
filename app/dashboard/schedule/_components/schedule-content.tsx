@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useOptimistic, startTransition, useEffect } from "react";
+import { arrayMove } from "@dnd-kit/sortable";
 import { useRouter } from "next/navigation";
 import {
   DndContext,
@@ -35,9 +36,15 @@ import {
   removeShiftAction,
   clearWeekShiftsAction,
 } from "@/app/actions/shift";
+import { reorderStaffAction } from "@/app/actions/staff";
 import { deletePopularShiftAction } from "@/app/actions/popular-shift";
 import { AddPopularShiftModal } from "./add-popular-shift-modal";
 import { AddShiftToCellModal } from "./add-shift-to-cell-modal";
+import { EditShiftModal } from "./edit-shift-modal";
+import { PublishRosterModal } from "./publish-roster-modal";
+import { EditRosterModal } from "./edit-roster-modal";
+import { WeekNavigator } from "./week-navigator";
+import { unpublishRosterAction } from "@/app/actions/publish-roster";
 import {
   Dialog,
   DialogContent,
@@ -46,7 +53,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Download, Send, Pencil } from "lucide-react";
+import { downloadRosterPdf } from "@/lib/download-roster-pdf";
 import { toast } from "sonner";
 
 type Staff = { id: string; name: string };
@@ -62,11 +70,15 @@ type ShiftData = {
   color?: string;
 };
 
+type StaffWithEmail = { id: string; name: string; email: string };
+
 type ScheduleContentProps = {
   staff: Staff[];
+  staffWithEmail: StaffWithEmail[];
   popularShifts: PopularShiftData[];
   shifts: ShiftData[];
   weekStart: string;
+  isPublished: boolean;
 };
 
 const DAYS = [
@@ -88,14 +100,19 @@ function getShiftDateForDay(weekStart: string, day: string): string {
 
 export function ScheduleContent({
   staff,
+  staffWithEmail,
   popularShifts,
   shifts,
   weekStart,
+  isPublished,
 }: ScheduleContentProps) {
   const [mounted, setMounted] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addModalKey, setAddModalKey] = useState(0);
   const [clearWeekOpen, setClearWeekOpen] = useState(false);
+  const [publishModalOpen, setPublishModalOpen] = useState(false);
+  const [editRosterModalOpen, setEditRosterModalOpen] = useState(false);
+  const [unpublishPending, setUnpublishPending] = useState(false);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
@@ -106,6 +123,7 @@ export function ScheduleContent({
     staffName: string;
     day: (typeof DAYS)[number];
   } | null>(null);
+  const [editShiftModal, setEditShiftModal] = useState<ShiftData | null>(null);
   const [activePopularShift, setActivePopularShift] =
     useState<PopularShiftData | null>(null);
   const [activeAssignedShift, setActiveAssignedShift] =
@@ -144,6 +162,14 @@ export function ScheduleContent({
     },
   );
 
+  const [optimisticStaff, addOptimisticStaff] = useOptimistic(
+    staff,
+    (state, orderedIds: string[]) => {
+      const orderMap = new Map(orderedIds.map((id, i) => [id, i]));
+      return [...state].sort((a, b) => (orderMap.get(a.id) ?? 0) - (orderMap.get(b.id) ?? 0));
+    },
+  );
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 5 },
@@ -175,13 +201,51 @@ export function ScheduleContent({
     setActivePopularShift(null);
     setActiveAssignedShift(null);
 
-    if (!over?.data?.current) return;
+    if (isPublished) return;
+    if (!over) return;
 
-    const { staffId, day } = over.data.current as {
-      staffId: string;
-      day: string;
-    };
-    if (!day || !DAYS.includes(day as (typeof DAYS)[number])) return;
+    const staffIds = new Set(staff.map((s) => s.id));
+    const isStaffId = (id: unknown): id is string =>
+      typeof id === "string" && staffIds.has(id);
+
+    const overId = String(over.id);
+
+    // Resolve over to a staff id (either direct row drop or cell drop)
+    let overStaffId: string | null = null;
+    if (staffIds.has(overId)) {
+      overStaffId = overId;
+    } else if (overId.startsWith("cell-")) {
+      const parts = overId.split("-");
+      const dayPart = parts[parts.length - 1];
+      if (DAYS.includes(dayPart as (typeof DAYS)[number])) {
+        const uuid = parts.slice(1, -1).join("-");
+        if (staffIds.has(uuid)) overStaffId = uuid;
+      }
+    }
+
+    // Row reorder: we're dragging a staff row and over another row
+    if (isStaffId(active.id) && overStaffId && active.id !== overStaffId) {
+      const oldIndex = optimisticStaff.findIndex((s) => s.id === active.id);
+      const newIndex = optimisticStaff.findIndex((s) => s.id === overStaffId);
+      if (oldIndex === -1 || newIndex === -1) return;
+      const reordered = arrayMove(optimisticStaff, oldIndex, newIndex);
+      const orderedIds = reordered.map((s) => s.id);
+      startTransition(() => addOptimisticStaff(orderedIds));
+      const result = await reorderStaffAction(orderedIds);
+      if (result.success) {
+        router.refresh();
+      } else {
+        toast.error(result.error);
+        router.refresh();
+      }
+      return;
+    }
+
+    // Shift drop: over is a cell (has staffId and day in data)
+    if (!over.data?.current) return;
+    const cellData = over.data.current as { staffId?: string; day?: string };
+    const { staffId, day } = cellData;
+    if (!staffId || !day || !DAYS.includes(day as (typeof DAYS)[number])) return;
 
     const newShiftDate = getShiftDateForDay(weekStart, day);
 
@@ -268,6 +332,18 @@ export function ScheduleContent({
     }
   }
 
+  async function handleUnpublishRoster() {
+    setUnpublishPending(true);
+    const result = await unpublishRosterAction(weekStart);
+    setUnpublishPending(false);
+    setEditRosterModalOpen(false);
+    if (result.success) {
+      router.refresh();
+    } else {
+      toast.error(result.error);
+    }
+  }
+
   function handleCellClick(
     staffId: string,
     staffName: string,
@@ -275,6 +351,12 @@ export function ScheduleContent({
   ) {
     setAddToCellModal({ staffId, staffName, day });
   }
+
+  function handleShiftClick(shift: ShiftData) {
+    setEditShiftModal(shift);
+  }
+
+  const staffNameById = new Map(staff.map((s) => [s.id, s.name]));
 
   async function handleDeletePopularShift(popularShiftId: string) {
     const result = await deletePopularShiftAction(popularShiftId);
@@ -320,39 +402,87 @@ export function ScheduleContent({
       onDragCancel={handleDragCancel}
     >
       <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center gap-3">
-          <Button size="sm" onClick={() => setAddModalOpen(true)}>
-            <Plus className="size-4 mr-1" />
-            Add New Shift
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setClearWeekOpen(true)}
-          >
-            <Trash2 className="size-4 mr-1" />
-            Clear this week
-          </Button>
-
-          <div className="flex flex-wrap gap-3">
-            {popularShifts.map((ps) => (
-              <PopularShiftCard
-                key={ps.id}
-                shift={ps}
-                onDelete={handleDeletePopularShift}
-              />
-            ))}
-          </div>
+        {/* Week navigator */}
+        <div className="flex justify-end">
+          <WeekNavigator weekStart={weekStart} />
         </div>
 
+        {/* Popular shifts: Add New Shift, Clear week, and drag-to-schedule cards */}
+        {!isPublished && (
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Quick add — drag to schedule
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button size="sm" onClick={() => setAddModalOpen(true)}>
+                <Plus className="size-4 mr-1.5" />
+                Add New Shift
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setClearWeekOpen(true)}
+              >
+                <Trash2 className="size-4 mr-1.5" />
+                Clear week
+              </Button>
+              {popularShifts.map((ps) => (
+                <PopularShiftCard
+                  key={ps.id}
+                  shift={ps}
+                  onDelete={handleDeletePopularShift}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         <ScheduleTable
-          staff={staff}
+          staff={optimisticStaff}
           popularShifts={popularShifts}
           shifts={optimisticShifts}
           weekStart={weekStart}
-          onRemoveShift={handleRemoveShift}
-          onCellClick={handleCellClick}
+          isEditable={!isPublished}
+          canReorderRows={!isPublished}
+          onRemoveShift={isPublished ? undefined : handleRemoveShift}
+          onCellClick={isPublished ? undefined : handleCellClick}
+          onShiftClick={isPublished ? undefined : handleShiftClick}
         />
+
+        {/* Actions below table */}
+        <div className="flex flex-col items-end gap-1">
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {isPublished ? (
+              <Button
+                variant="outline"
+                onClick={() => setEditRosterModalOpen(true)}
+              >
+                <Pencil className="size-4 mr-1.5" />
+                Edit roster
+              </Button>
+            ) : (
+              <Button onClick={() => setPublishModalOpen(true)}>
+                <Send className="size-4 mr-1.5" />
+                Publish
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              onClick={() =>
+                downloadRosterPdf(staff, optimisticShifts, weekStart)
+              }
+            >
+              <Download className="size-4 mr-1.5" />
+              Download PDF
+            </Button>
+          </div>
+          {!isPublished && (
+            <p className="text-xs text-muted-foreground max-w-md text-right">
+              Beta (free): This version has limited email capacity. Publish may
+              not work if the sending limit is reached.
+            </p>
+          )}
+        </div>
 
         <DragOverlay>
           {activeAssignedShift ? (
@@ -380,6 +510,34 @@ export function ScheduleContent({
             staffId={addToCellModal.staffId}
             staffName={addToCellModal.staffName}
             day={addToCellModal.day}
+            weekStart={weekStart}
+          />
+        )}
+
+        <PublishRosterModal
+          open={publishModalOpen}
+          onOpenChange={setPublishModalOpen}
+          staff={staffWithEmail}
+          staffForPdf={staff}
+          shifts={optimisticShifts}
+          weekStart={weekStart}
+          onSuccess={() => router.refresh()}
+        />
+
+        <EditRosterModal
+          open={editRosterModalOpen}
+          onOpenChange={setEditRosterModalOpen}
+          onConfirm={handleUnpublishRoster}
+          pending={unpublishPending}
+        />
+
+        {editShiftModal && (
+          <EditShiftModal
+            open={!!editShiftModal}
+            onOpenChange={(open) => !open && setEditShiftModal(null)}
+            onSuccess={() => router.refresh()}
+            shift={editShiftModal}
+            staffName={staffNameById.get(editShiftModal.staffId) ?? "Staff"}
             weekStart={weekStart}
           />
         )}

@@ -178,6 +178,7 @@ exports.Prisma.StaffScalarFieldEnum = {
   startDate: 'startDate',
   emergencyContactName: 'emergencyContactName',
   emergencyContactPhone: 'emergencyContactPhone',
+  displayOrder: 'displayOrder',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -203,6 +204,13 @@ exports.Prisma.PopularShiftScalarFieldEnum = {
   hours: 'hours',
   breakMinutes: 'breakMinutes',
   color: 'color'
+};
+
+exports.Prisma.PublishedRosterScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  weekStart: 'weekStart',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -243,7 +251,8 @@ exports.Prisma.ModelName = {
   Verification: 'Verification',
   Staff: 'Staff',
   Shift: 'Shift',
-  PopularShift: 'PopularShift'
+  PopularShift: 'PopularShift',
+  PublishedRoster: 'PublishedRoster'
 };
 
 /**

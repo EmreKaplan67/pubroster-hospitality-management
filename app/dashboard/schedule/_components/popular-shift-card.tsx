@@ -72,32 +72,48 @@ export type AssignedShiftData = {
   startTime: string;
   endTime: string;
   hours: string;
-  breakMinutes?: string;
+  breakMinutes: string;
   color?: string;
 };
 
 type ShiftCellCardProps = {
   shift: AssignedShiftData;
   onRemove?: (shiftId: string) => void;
+  onEdit?: (shift: AssignedShiftData) => void;
+  disabled?: boolean;
 };
 
-/** Compact shift display for table cells (assigned shifts) - draggable */
-export function ShiftCellCard({ shift, onRemove }: ShiftCellCardProps) {
+/** Compact shift display for table cells (assigned shifts) - draggable, click to edit */
+export function ShiftCellCard({ shift, onRemove, onEdit, disabled }: ShiftCellCardProps) {
   const isOptimistic = shift.id.startsWith("temp-");
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `assigned-shift-${shift.id}`,
     data: { assignedShift: shift },
+    disabled: disabled || isOptimistic,
   });
   const bgColor = shift.color ?? DEFAULT_CARD_COLOR;
   const hasBreak = (shift.breakMinutes && parseFloat(shift.breakMinutes) > 0) ?? false;
+  const canEdit = onEdit && !isOptimistic && !disabled;
 
   return (
     <div
       ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      className={`flex items-start gap-1 rounded border border-border px-2 py-1 text-xs cursor-grab active:cursor-grabbing ${isDragging ? "opacity-40" : ""}`}
+      {...(disabled ? {} : { ...listeners, ...attributes })}
+      className={`flex items-start gap-1 rounded border border-border px-2 py-1 text-sm ${disabled ? "cursor-default" : "cursor-grab active:cursor-grabbing"} ${isDragging ? "opacity-40" : ""}`}
       style={{ backgroundColor: bgColor }}
+      onClick={canEdit ? () => onEdit(shift) : undefined}
+      role={canEdit ? "button" : undefined}
+      tabIndex={canEdit ? 0 : undefined}
+      onKeyDown={
+        canEdit
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onEdit(shift);
+              }
+            }
+          : undefined
+      }
     >
       <div className="min-w-0 flex-1">
         <div className="font-medium">
@@ -108,7 +124,7 @@ export function ShiftCellCard({ shift, onRemove }: ShiftCellCardProps) {
           {hasBreak ? ` (${shift.breakMinutes}m break)` : " (no break)"}
         </div>
       </div>
-      {onRemove && !isOptimistic && (
+      {onRemove && !isOptimistic && !disabled && (
         <button
           type="button"
           onPointerDown={(e) => e.stopPropagation()}

@@ -22,8 +22,10 @@ export default async function DashboardLayout({
   return (
     <div className="mx-2">
       <Nav>
-        <div className="flex gap-3 flex-1 justify-center">
-          <NavLink href="/dashboard">Dashboard</NavLink>
+        <div className="flex gap-3 flex-1 justify-center items-center">
+          <span className="mr-2 px-2 py-0.5 text-xs font-medium rounded bg-amber-500/20 text-amber-700 dark:text-amber-400">
+            Beta
+          </span>
           <NavLink href="/dashboard/staff">Staff</NavLink>
           <NavLink href="/dashboard/schedule">Schedule</NavLink>
         </div>

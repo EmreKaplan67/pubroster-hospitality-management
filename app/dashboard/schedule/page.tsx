@@ -1,17 +1,23 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { getWeekStart } from "@/lib/schedule-week";
 import { ScheduleContent } from "./_components/schedule-content";
 
-function getWeekStart(date: Date): string {
-  const d = new Date(date);
+function parseWeekParam(week: string | undefined): string | null {
+  if (!week || !/^\d{4}-\d{2}-\d{2}$/.test(week)) return null;
+  const d = new Date(week + "T12:00:00");
+  if (isNaN(d.getTime())) return null;
   const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  d.setDate(diff);
-  return d.toISOString().slice(0, 10);
+  if (day !== 1) return null;
+  return week;
 }
 
-export default async function SchedulePage() {
+export default async function SchedulePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ week?: string }>;
+}) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -20,15 +26,19 @@ export default async function SchedulePage() {
     return null;
   }
 
-  const weekStart = getWeekStart(new Date());
+  const params = await searchParams;
+  const weekStart =
+    parseWeekParam(params.week) ?? getWeekStart(new Date());
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekEnd.getDate() + 6);
 
-  const [staff, popularShifts, shifts] = await Promise.all([
+  const weekStartDate = new Date(weekStart + "T12:00:00");
+
+  const [staff, popularShifts, shifts, publishedRoster] = await Promise.all([
     prisma.staff.findMany({
       where: { userId: session.user.id, status: "ACTIVE" },
-      orderBy: { name: "asc" },
-      select: { id: true, name: true },
+      orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
+      select: { id: true, name: true, email: true },
     }),
     prisma.popularShift.findMany(),
     prisma.shift.findMany({
@@ -41,12 +51,32 @@ export default async function SchedulePage() {
       },
       orderBy: { shiftDate: "asc" },
     }),
+    prisma.publishedRoster.findUnique({
+      where: {
+        userId_weekStart: {
+          userId: session.user.id,
+          weekStart: weekStartDate,
+        },
+      },
+    }),
   ]);
+
+  const staffWithEmail = staff.filter((s): s is typeof s & { email: string } =>
+    Boolean(s.email?.trim())
+  );
 
   const serializedStaff = staff.map((s) => ({
     id: s.id,
     name: s.name,
   }));
+
+  const serializedStaffWithEmail = staffWithEmail.map((s) => ({
+    id: s.id,
+    name: s.name,
+    email: s.email!,
+  }));
+
+  const isPublished = !!publishedRoster;
 
   const serializedPopularShifts = popularShifts.map((ps) => ({
     id: ps.id,
@@ -69,19 +99,13 @@ export default async function SchedulePage() {
   }));
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Schedule</h1>
-        <p className="text-muted-foreground">
-          Manage your schedule and shifts.
-        </p>
-      </div>
-      <ScheduleContent
-        staff={serializedStaff}
-        popularShifts={serializedPopularShifts}
-        shifts={serializedShifts}
-        weekStart={weekStart}
-      />
-    </div>
+    <ScheduleContent
+      staff={serializedStaff}
+      staffWithEmail={serializedStaffWithEmail}
+      popularShifts={serializedPopularShifts}
+      shifts={serializedShifts}
+      weekStart={weekStart}
+      isPublished={isPublished}
+    />
   );
 }

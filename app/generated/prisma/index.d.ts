@@ -48,6 +48,11 @@ export type Shift = $Result.DefaultSelection<Prisma.$ShiftPayload>
  * 
  */
 export type PopularShift = $Result.DefaultSelection<Prisma.$PopularShiftPayload>
+/**
+ * Model PublishedRoster
+ * 
+ */
+export type PublishedRoster = $Result.DefaultSelection<Prisma.$PublishedRosterPayload>
 
 /**
  * Enums
@@ -271,6 +276,16 @@ export class PrismaClient<
     * ```
     */
   get popularShift(): Prisma.PopularShiftDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.publishedRoster`: Exposes CRUD operations for the **PublishedRoster** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PublishedRosters
+    * const publishedRosters = await prisma.publishedRoster.findMany()
+    * ```
+    */
+  get publishedRoster(): Prisma.PublishedRosterDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -711,7 +726,8 @@ export namespace Prisma {
     Verification: 'Verification',
     Staff: 'Staff',
     Shift: 'Shift',
-    PopularShift: 'PopularShift'
+    PopularShift: 'PopularShift',
+    PublishedRoster: 'PublishedRoster'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -727,7 +743,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "staff" | "shift" | "popularShift"
+      modelProps: "user" | "session" | "account" | "verification" | "staff" | "shift" | "popularShift" | "publishedRoster"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1249,6 +1265,80 @@ export namespace Prisma {
           }
         }
       }
+      PublishedRoster: {
+        payload: Prisma.$PublishedRosterPayload<ExtArgs>
+        fields: Prisma.PublishedRosterFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PublishedRosterFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublishedRosterPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PublishedRosterFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublishedRosterPayload>
+          }
+          findFirst: {
+            args: Prisma.PublishedRosterFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublishedRosterPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PublishedRosterFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublishedRosterPayload>
+          }
+          findMany: {
+            args: Prisma.PublishedRosterFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublishedRosterPayload>[]
+          }
+          create: {
+            args: Prisma.PublishedRosterCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublishedRosterPayload>
+          }
+          createMany: {
+            args: Prisma.PublishedRosterCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PublishedRosterCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublishedRosterPayload>[]
+          }
+          delete: {
+            args: Prisma.PublishedRosterDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublishedRosterPayload>
+          }
+          update: {
+            args: Prisma.PublishedRosterUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublishedRosterPayload>
+          }
+          deleteMany: {
+            args: Prisma.PublishedRosterDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PublishedRosterUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PublishedRosterUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublishedRosterPayload>[]
+          }
+          upsert: {
+            args: Prisma.PublishedRosterUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PublishedRosterPayload>
+          }
+          aggregate: {
+            args: Prisma.PublishedRosterAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePublishedRoster>
+          }
+          groupBy: {
+            args: Prisma.PublishedRosterGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PublishedRosterGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PublishedRosterCountArgs<ExtArgs>
+            result: $Utils.Optional<PublishedRosterCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1364,6 +1454,7 @@ export namespace Prisma {
     staff?: StaffOmit
     shift?: ShiftOmit
     popularShift?: PopularShiftOmit
+    publishedRoster?: PublishedRosterOmit
   }
 
   /* Types for Logging */
@@ -1447,12 +1538,14 @@ export namespace Prisma {
     sessions: number
     accounts: number
     staffs: number
+    publishedRosters: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     staffs?: boolean | UserCountOutputTypeCountStaffsArgs
+    publishedRosters?: boolean | UserCountOutputTypeCountPublishedRostersArgs
   }
 
   // Custom InputTypes
@@ -1485,6 +1578,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountStaffsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: StaffWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountPublishedRostersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PublishedRosterWhereInput
   }
 
 
@@ -1714,6 +1814,7 @@ export namespace Prisma {
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     staffs?: boolean | User$staffsArgs<ExtArgs>
+    publishedRosters?: boolean | User$publishedRostersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1755,6 +1856,7 @@ export namespace Prisma {
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     staffs?: boolean | User$staffsArgs<ExtArgs>
+    publishedRosters?: boolean | User$publishedRostersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1766,6 +1868,7 @@ export namespace Prisma {
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       staffs: Prisma.$StaffPayload<ExtArgs>[]
+      publishedRosters: Prisma.$PublishedRosterPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2173,6 +2276,7 @@ export namespace Prisma {
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     staffs<T extends User$staffsArgs<ExtArgs> = {}>(args?: Subset<T, User$staffsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    publishedRosters<T extends User$publishedRostersArgs<ExtArgs> = {}>(args?: Subset<T, User$publishedRostersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2667,6 +2771,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: StaffScalarFieldEnum | StaffScalarFieldEnum[]
+  }
+
+  /**
+   * User.publishedRosters
+   */
+  export type User$publishedRostersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterInclude<ExtArgs> | null
+    where?: PublishedRosterWhereInput
+    orderBy?: PublishedRosterOrderByWithRelationInput | PublishedRosterOrderByWithRelationInput[]
+    cursor?: PublishedRosterWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PublishedRosterScalarFieldEnum | PublishedRosterScalarFieldEnum[]
   }
 
   /**
@@ -5969,10 +6097,12 @@ export namespace Prisma {
 
   export type StaffAvgAggregateOutputType = {
     hourlyRate: Decimal | null
+    displayOrder: number | null
   }
 
   export type StaffSumAggregateOutputType = {
     hourlyRate: Decimal | null
+    displayOrder: number | null
   }
 
   export type StaffMinAggregateOutputType = {
@@ -5986,6 +6116,7 @@ export namespace Prisma {
     startDate: Date | null
     emergencyContactName: string | null
     emergencyContactPhone: string | null
+    displayOrder: number | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6002,6 +6133,7 @@ export namespace Prisma {
     startDate: Date | null
     emergencyContactName: string | null
     emergencyContactPhone: string | null
+    displayOrder: number | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6018,6 +6150,7 @@ export namespace Prisma {
     startDate: number
     emergencyContactName: number
     emergencyContactPhone: number
+    displayOrder: number
     userId: number
     createdAt: number
     updatedAt: number
@@ -6027,10 +6160,12 @@ export namespace Prisma {
 
   export type StaffAvgAggregateInputType = {
     hourlyRate?: true
+    displayOrder?: true
   }
 
   export type StaffSumAggregateInputType = {
     hourlyRate?: true
+    displayOrder?: true
   }
 
   export type StaffMinAggregateInputType = {
@@ -6044,6 +6179,7 @@ export namespace Prisma {
     startDate?: true
     emergencyContactName?: true
     emergencyContactPhone?: true
+    displayOrder?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -6060,6 +6196,7 @@ export namespace Prisma {
     startDate?: true
     emergencyContactName?: true
     emergencyContactPhone?: true
+    displayOrder?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -6076,6 +6213,7 @@ export namespace Prisma {
     startDate?: true
     emergencyContactName?: true
     emergencyContactPhone?: true
+    displayOrder?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -6179,6 +6317,7 @@ export namespace Prisma {
     startDate: Date | null
     emergencyContactName: string | null
     emergencyContactPhone: string | null
+    displayOrder: number
     userId: string
     createdAt: Date
     updatedAt: Date
@@ -6214,6 +6353,7 @@ export namespace Prisma {
     startDate?: boolean
     emergencyContactName?: boolean
     emergencyContactPhone?: boolean
+    displayOrder?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6233,6 +6373,7 @@ export namespace Prisma {
     startDate?: boolean
     emergencyContactName?: boolean
     emergencyContactPhone?: boolean
+    displayOrder?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6250,6 +6391,7 @@ export namespace Prisma {
     startDate?: boolean
     emergencyContactName?: boolean
     emergencyContactPhone?: boolean
+    displayOrder?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6267,12 +6409,13 @@ export namespace Prisma {
     startDate?: boolean
     emergencyContactName?: boolean
     emergencyContactPhone?: boolean
+    displayOrder?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type StaffOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "phone" | "role" | "status" | "hourlyRate" | "startDate" | "emergencyContactName" | "emergencyContactPhone" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["staff"]>
+  export type StaffOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "phone" | "role" | "status" | "hourlyRate" | "startDate" | "emergencyContactName" | "emergencyContactPhone" | "displayOrder" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["staff"]>
   export type StaffInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     shifts?: boolean | Staff$shiftsArgs<ExtArgs>
@@ -6302,6 +6445,7 @@ export namespace Prisma {
       startDate: Date | null
       emergencyContactName: string | null
       emergencyContactPhone: string | null
+      displayOrder: number
       userId: string
       createdAt: Date
       updatedAt: Date
@@ -6740,6 +6884,7 @@ export namespace Prisma {
     readonly startDate: FieldRef<"Staff", 'DateTime'>
     readonly emergencyContactName: FieldRef<"Staff", 'String'>
     readonly emergencyContactPhone: FieldRef<"Staff", 'String'>
+    readonly displayOrder: FieldRef<"Staff", 'Int'>
     readonly userId: FieldRef<"Staff", 'String'>
     readonly createdAt: FieldRef<"Staff", 'DateTime'>
     readonly updatedAt: FieldRef<"Staff", 'DateTime'>
@@ -9389,6 +9534,1051 @@ export namespace Prisma {
 
 
   /**
+   * Model PublishedRoster
+   */
+
+  export type AggregatePublishedRoster = {
+    _count: PublishedRosterCountAggregateOutputType | null
+    _min: PublishedRosterMinAggregateOutputType | null
+    _max: PublishedRosterMaxAggregateOutputType | null
+  }
+
+  export type PublishedRosterMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    weekStart: Date | null
+    createdAt: Date | null
+  }
+
+  export type PublishedRosterMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    weekStart: Date | null
+    createdAt: Date | null
+  }
+
+  export type PublishedRosterCountAggregateOutputType = {
+    id: number
+    userId: number
+    weekStart: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type PublishedRosterMinAggregateInputType = {
+    id?: true
+    userId?: true
+    weekStart?: true
+    createdAt?: true
+  }
+
+  export type PublishedRosterMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    weekStart?: true
+    createdAt?: true
+  }
+
+  export type PublishedRosterCountAggregateInputType = {
+    id?: true
+    userId?: true
+    weekStart?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type PublishedRosterAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PublishedRoster to aggregate.
+     */
+    where?: PublishedRosterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PublishedRosters to fetch.
+     */
+    orderBy?: PublishedRosterOrderByWithRelationInput | PublishedRosterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PublishedRosterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PublishedRosters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PublishedRosters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PublishedRosters
+    **/
+    _count?: true | PublishedRosterCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PublishedRosterMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PublishedRosterMaxAggregateInputType
+  }
+
+  export type GetPublishedRosterAggregateType<T extends PublishedRosterAggregateArgs> = {
+        [P in keyof T & keyof AggregatePublishedRoster]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePublishedRoster[P]>
+      : GetScalarType<T[P], AggregatePublishedRoster[P]>
+  }
+
+
+
+
+  export type PublishedRosterGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PublishedRosterWhereInput
+    orderBy?: PublishedRosterOrderByWithAggregationInput | PublishedRosterOrderByWithAggregationInput[]
+    by: PublishedRosterScalarFieldEnum[] | PublishedRosterScalarFieldEnum
+    having?: PublishedRosterScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PublishedRosterCountAggregateInputType | true
+    _min?: PublishedRosterMinAggregateInputType
+    _max?: PublishedRosterMaxAggregateInputType
+  }
+
+  export type PublishedRosterGroupByOutputType = {
+    id: string
+    userId: string
+    weekStart: Date
+    createdAt: Date
+    _count: PublishedRosterCountAggregateOutputType | null
+    _min: PublishedRosterMinAggregateOutputType | null
+    _max: PublishedRosterMaxAggregateOutputType | null
+  }
+
+  type GetPublishedRosterGroupByPayload<T extends PublishedRosterGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PublishedRosterGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PublishedRosterGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PublishedRosterGroupByOutputType[P]>
+            : GetScalarType<T[P], PublishedRosterGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PublishedRosterSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    weekStart?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["publishedRoster"]>
+
+  export type PublishedRosterSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    weekStart?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["publishedRoster"]>
+
+  export type PublishedRosterSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    weekStart?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["publishedRoster"]>
+
+  export type PublishedRosterSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    weekStart?: boolean
+    createdAt?: boolean
+  }
+
+  export type PublishedRosterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "weekStart" | "createdAt", ExtArgs["result"]["publishedRoster"]>
+  export type PublishedRosterInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PublishedRosterIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PublishedRosterIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $PublishedRosterPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PublishedRoster"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      weekStart: Date
+      createdAt: Date
+    }, ExtArgs["result"]["publishedRoster"]>
+    composites: {}
+  }
+
+  type PublishedRosterGetPayload<S extends boolean | null | undefined | PublishedRosterDefaultArgs> = $Result.GetResult<Prisma.$PublishedRosterPayload, S>
+
+  type PublishedRosterCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PublishedRosterFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PublishedRosterCountAggregateInputType | true
+    }
+
+  export interface PublishedRosterDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PublishedRoster'], meta: { name: 'PublishedRoster' } }
+    /**
+     * Find zero or one PublishedRoster that matches the filter.
+     * @param {PublishedRosterFindUniqueArgs} args - Arguments to find a PublishedRoster
+     * @example
+     * // Get one PublishedRoster
+     * const publishedRoster = await prisma.publishedRoster.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PublishedRosterFindUniqueArgs>(args: SelectSubset<T, PublishedRosterFindUniqueArgs<ExtArgs>>): Prisma__PublishedRosterClient<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PublishedRoster that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PublishedRosterFindUniqueOrThrowArgs} args - Arguments to find a PublishedRoster
+     * @example
+     * // Get one PublishedRoster
+     * const publishedRoster = await prisma.publishedRoster.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PublishedRosterFindUniqueOrThrowArgs>(args: SelectSubset<T, PublishedRosterFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PublishedRosterClient<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PublishedRoster that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublishedRosterFindFirstArgs} args - Arguments to find a PublishedRoster
+     * @example
+     * // Get one PublishedRoster
+     * const publishedRoster = await prisma.publishedRoster.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PublishedRosterFindFirstArgs>(args?: SelectSubset<T, PublishedRosterFindFirstArgs<ExtArgs>>): Prisma__PublishedRosterClient<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PublishedRoster that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublishedRosterFindFirstOrThrowArgs} args - Arguments to find a PublishedRoster
+     * @example
+     * // Get one PublishedRoster
+     * const publishedRoster = await prisma.publishedRoster.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PublishedRosterFindFirstOrThrowArgs>(args?: SelectSubset<T, PublishedRosterFindFirstOrThrowArgs<ExtArgs>>): Prisma__PublishedRosterClient<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PublishedRosters that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublishedRosterFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PublishedRosters
+     * const publishedRosters = await prisma.publishedRoster.findMany()
+     * 
+     * // Get first 10 PublishedRosters
+     * const publishedRosters = await prisma.publishedRoster.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const publishedRosterWithIdOnly = await prisma.publishedRoster.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PublishedRosterFindManyArgs>(args?: SelectSubset<T, PublishedRosterFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PublishedRoster.
+     * @param {PublishedRosterCreateArgs} args - Arguments to create a PublishedRoster.
+     * @example
+     * // Create one PublishedRoster
+     * const PublishedRoster = await prisma.publishedRoster.create({
+     *   data: {
+     *     // ... data to create a PublishedRoster
+     *   }
+     * })
+     * 
+     */
+    create<T extends PublishedRosterCreateArgs>(args: SelectSubset<T, PublishedRosterCreateArgs<ExtArgs>>): Prisma__PublishedRosterClient<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PublishedRosters.
+     * @param {PublishedRosterCreateManyArgs} args - Arguments to create many PublishedRosters.
+     * @example
+     * // Create many PublishedRosters
+     * const publishedRoster = await prisma.publishedRoster.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PublishedRosterCreateManyArgs>(args?: SelectSubset<T, PublishedRosterCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PublishedRosters and returns the data saved in the database.
+     * @param {PublishedRosterCreateManyAndReturnArgs} args - Arguments to create many PublishedRosters.
+     * @example
+     * // Create many PublishedRosters
+     * const publishedRoster = await prisma.publishedRoster.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PublishedRosters and only return the `id`
+     * const publishedRosterWithIdOnly = await prisma.publishedRoster.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PublishedRosterCreateManyAndReturnArgs>(args?: SelectSubset<T, PublishedRosterCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PublishedRoster.
+     * @param {PublishedRosterDeleteArgs} args - Arguments to delete one PublishedRoster.
+     * @example
+     * // Delete one PublishedRoster
+     * const PublishedRoster = await prisma.publishedRoster.delete({
+     *   where: {
+     *     // ... filter to delete one PublishedRoster
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PublishedRosterDeleteArgs>(args: SelectSubset<T, PublishedRosterDeleteArgs<ExtArgs>>): Prisma__PublishedRosterClient<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PublishedRoster.
+     * @param {PublishedRosterUpdateArgs} args - Arguments to update one PublishedRoster.
+     * @example
+     * // Update one PublishedRoster
+     * const publishedRoster = await prisma.publishedRoster.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PublishedRosterUpdateArgs>(args: SelectSubset<T, PublishedRosterUpdateArgs<ExtArgs>>): Prisma__PublishedRosterClient<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PublishedRosters.
+     * @param {PublishedRosterDeleteManyArgs} args - Arguments to filter PublishedRosters to delete.
+     * @example
+     * // Delete a few PublishedRosters
+     * const { count } = await prisma.publishedRoster.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PublishedRosterDeleteManyArgs>(args?: SelectSubset<T, PublishedRosterDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PublishedRosters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublishedRosterUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PublishedRosters
+     * const publishedRoster = await prisma.publishedRoster.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PublishedRosterUpdateManyArgs>(args: SelectSubset<T, PublishedRosterUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PublishedRosters and returns the data updated in the database.
+     * @param {PublishedRosterUpdateManyAndReturnArgs} args - Arguments to update many PublishedRosters.
+     * @example
+     * // Update many PublishedRosters
+     * const publishedRoster = await prisma.publishedRoster.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PublishedRosters and only return the `id`
+     * const publishedRosterWithIdOnly = await prisma.publishedRoster.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PublishedRosterUpdateManyAndReturnArgs>(args: SelectSubset<T, PublishedRosterUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PublishedRoster.
+     * @param {PublishedRosterUpsertArgs} args - Arguments to update or create a PublishedRoster.
+     * @example
+     * // Update or create a PublishedRoster
+     * const publishedRoster = await prisma.publishedRoster.upsert({
+     *   create: {
+     *     // ... data to create a PublishedRoster
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PublishedRoster we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PublishedRosterUpsertArgs>(args: SelectSubset<T, PublishedRosterUpsertArgs<ExtArgs>>): Prisma__PublishedRosterClient<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PublishedRosters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublishedRosterCountArgs} args - Arguments to filter PublishedRosters to count.
+     * @example
+     * // Count the number of PublishedRosters
+     * const count = await prisma.publishedRoster.count({
+     *   where: {
+     *     // ... the filter for the PublishedRosters we want to count
+     *   }
+     * })
+    **/
+    count<T extends PublishedRosterCountArgs>(
+      args?: Subset<T, PublishedRosterCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PublishedRosterCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PublishedRoster.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublishedRosterAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PublishedRosterAggregateArgs>(args: Subset<T, PublishedRosterAggregateArgs>): Prisma.PrismaPromise<GetPublishedRosterAggregateType<T>>
+
+    /**
+     * Group by PublishedRoster.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PublishedRosterGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PublishedRosterGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PublishedRosterGroupByArgs['orderBy'] }
+        : { orderBy?: PublishedRosterGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PublishedRosterGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPublishedRosterGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PublishedRoster model
+   */
+  readonly fields: PublishedRosterFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PublishedRoster.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PublishedRosterClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PublishedRoster model
+   */
+  interface PublishedRosterFieldRefs {
+    readonly id: FieldRef<"PublishedRoster", 'String'>
+    readonly userId: FieldRef<"PublishedRoster", 'String'>
+    readonly weekStart: FieldRef<"PublishedRoster", 'DateTime'>
+    readonly createdAt: FieldRef<"PublishedRoster", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PublishedRoster findUnique
+   */
+  export type PublishedRosterFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterInclude<ExtArgs> | null
+    /**
+     * Filter, which PublishedRoster to fetch.
+     */
+    where: PublishedRosterWhereUniqueInput
+  }
+
+  /**
+   * PublishedRoster findUniqueOrThrow
+   */
+  export type PublishedRosterFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterInclude<ExtArgs> | null
+    /**
+     * Filter, which PublishedRoster to fetch.
+     */
+    where: PublishedRosterWhereUniqueInput
+  }
+
+  /**
+   * PublishedRoster findFirst
+   */
+  export type PublishedRosterFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterInclude<ExtArgs> | null
+    /**
+     * Filter, which PublishedRoster to fetch.
+     */
+    where?: PublishedRosterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PublishedRosters to fetch.
+     */
+    orderBy?: PublishedRosterOrderByWithRelationInput | PublishedRosterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PublishedRosters.
+     */
+    cursor?: PublishedRosterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PublishedRosters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PublishedRosters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PublishedRosters.
+     */
+    distinct?: PublishedRosterScalarFieldEnum | PublishedRosterScalarFieldEnum[]
+  }
+
+  /**
+   * PublishedRoster findFirstOrThrow
+   */
+  export type PublishedRosterFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterInclude<ExtArgs> | null
+    /**
+     * Filter, which PublishedRoster to fetch.
+     */
+    where?: PublishedRosterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PublishedRosters to fetch.
+     */
+    orderBy?: PublishedRosterOrderByWithRelationInput | PublishedRosterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PublishedRosters.
+     */
+    cursor?: PublishedRosterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PublishedRosters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PublishedRosters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PublishedRosters.
+     */
+    distinct?: PublishedRosterScalarFieldEnum | PublishedRosterScalarFieldEnum[]
+  }
+
+  /**
+   * PublishedRoster findMany
+   */
+  export type PublishedRosterFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterInclude<ExtArgs> | null
+    /**
+     * Filter, which PublishedRosters to fetch.
+     */
+    where?: PublishedRosterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PublishedRosters to fetch.
+     */
+    orderBy?: PublishedRosterOrderByWithRelationInput | PublishedRosterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PublishedRosters.
+     */
+    cursor?: PublishedRosterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PublishedRosters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PublishedRosters.
+     */
+    skip?: number
+    distinct?: PublishedRosterScalarFieldEnum | PublishedRosterScalarFieldEnum[]
+  }
+
+  /**
+   * PublishedRoster create
+   */
+  export type PublishedRosterCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PublishedRoster.
+     */
+    data: XOR<PublishedRosterCreateInput, PublishedRosterUncheckedCreateInput>
+  }
+
+  /**
+   * PublishedRoster createMany
+   */
+  export type PublishedRosterCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PublishedRosters.
+     */
+    data: PublishedRosterCreateManyInput | PublishedRosterCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PublishedRoster createManyAndReturn
+   */
+  export type PublishedRosterCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * The data used to create many PublishedRosters.
+     */
+    data: PublishedRosterCreateManyInput | PublishedRosterCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PublishedRoster update
+   */
+  export type PublishedRosterUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PublishedRoster.
+     */
+    data: XOR<PublishedRosterUpdateInput, PublishedRosterUncheckedUpdateInput>
+    /**
+     * Choose, which PublishedRoster to update.
+     */
+    where: PublishedRosterWhereUniqueInput
+  }
+
+  /**
+   * PublishedRoster updateMany
+   */
+  export type PublishedRosterUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PublishedRosters.
+     */
+    data: XOR<PublishedRosterUpdateManyMutationInput, PublishedRosterUncheckedUpdateManyInput>
+    /**
+     * Filter which PublishedRosters to update
+     */
+    where?: PublishedRosterWhereInput
+    /**
+     * Limit how many PublishedRosters to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PublishedRoster updateManyAndReturn
+   */
+  export type PublishedRosterUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * The data used to update PublishedRosters.
+     */
+    data: XOR<PublishedRosterUpdateManyMutationInput, PublishedRosterUncheckedUpdateManyInput>
+    /**
+     * Filter which PublishedRosters to update
+     */
+    where?: PublishedRosterWhereInput
+    /**
+     * Limit how many PublishedRosters to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PublishedRoster upsert
+   */
+  export type PublishedRosterUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PublishedRoster to update in case it exists.
+     */
+    where: PublishedRosterWhereUniqueInput
+    /**
+     * In case the PublishedRoster found by the `where` argument doesn't exist, create a new PublishedRoster with this data.
+     */
+    create: XOR<PublishedRosterCreateInput, PublishedRosterUncheckedCreateInput>
+    /**
+     * In case the PublishedRoster was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PublishedRosterUpdateInput, PublishedRosterUncheckedUpdateInput>
+  }
+
+  /**
+   * PublishedRoster delete
+   */
+  export type PublishedRosterDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterInclude<ExtArgs> | null
+    /**
+     * Filter which PublishedRoster to delete.
+     */
+    where: PublishedRosterWhereUniqueInput
+  }
+
+  /**
+   * PublishedRoster deleteMany
+   */
+  export type PublishedRosterDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PublishedRosters to delete
+     */
+    where?: PublishedRosterWhereInput
+    /**
+     * Limit how many PublishedRosters to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PublishedRoster without action
+   */
+  export type PublishedRosterDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PublishedRoster
+     */
+    select?: PublishedRosterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PublishedRoster
+     */
+    omit?: PublishedRosterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PublishedRosterInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -9472,6 +10662,7 @@ export namespace Prisma {
     startDate: 'startDate',
     emergencyContactName: 'emergencyContactName',
     emergencyContactPhone: 'emergencyContactPhone',
+    displayOrder: 'displayOrder',
     userId: 'userId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -9506,6 +10697,16 @@ export namespace Prisma {
   };
 
   export type PopularShiftScalarFieldEnum = (typeof PopularShiftScalarFieldEnum)[keyof typeof PopularShiftScalarFieldEnum]
+
+
+  export const PublishedRosterScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    weekStart: 'weekStart',
+    createdAt: 'createdAt'
+  };
+
+  export type PublishedRosterScalarFieldEnum = (typeof PublishedRosterScalarFieldEnum)[keyof typeof PublishedRosterScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -9626,6 +10827,20 @@ export namespace Prisma {
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
   /**
    * Deep Input Types
    */
@@ -9646,6 +10861,7 @@ export namespace Prisma {
     sessions?: SessionListRelationFilter
     accounts?: AccountListRelationFilter
     staffs?: StaffListRelationFilter
+    publishedRosters?: PublishedRosterListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -9660,6 +10876,7 @@ export namespace Prisma {
     sessions?: SessionOrderByRelationAggregateInput
     accounts?: AccountOrderByRelationAggregateInput
     staffs?: StaffOrderByRelationAggregateInput
+    publishedRosters?: PublishedRosterOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -9677,6 +10894,7 @@ export namespace Prisma {
     sessions?: SessionListRelationFilter
     accounts?: AccountListRelationFilter
     staffs?: StaffListRelationFilter
+    publishedRosters?: PublishedRosterListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -9943,6 +11161,7 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"Staff"> | Date | string | null
     emergencyContactName?: StringNullableFilter<"Staff"> | string | null
     emergencyContactPhone?: StringNullableFilter<"Staff"> | string | null
+    displayOrder?: IntFilter<"Staff"> | number
     userId?: StringFilter<"Staff"> | string
     createdAt?: DateTimeFilter<"Staff"> | Date | string
     updatedAt?: DateTimeFilter<"Staff"> | Date | string
@@ -9961,6 +11180,7 @@ export namespace Prisma {
     startDate?: SortOrderInput | SortOrder
     emergencyContactName?: SortOrderInput | SortOrder
     emergencyContactPhone?: SortOrderInput | SortOrder
+    displayOrder?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -9983,6 +11203,7 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"Staff"> | Date | string | null
     emergencyContactName?: StringNullableFilter<"Staff"> | string | null
     emergencyContactPhone?: StringNullableFilter<"Staff"> | string | null
+    displayOrder?: IntFilter<"Staff"> | number
     userId?: StringFilter<"Staff"> | string
     createdAt?: DateTimeFilter<"Staff"> | Date | string
     updatedAt?: DateTimeFilter<"Staff"> | Date | string
@@ -10001,6 +11222,7 @@ export namespace Prisma {
     startDate?: SortOrderInput | SortOrder
     emergencyContactName?: SortOrderInput | SortOrder
     emergencyContactPhone?: SortOrderInput | SortOrder
+    displayOrder?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10025,6 +11247,7 @@ export namespace Prisma {
     startDate?: DateTimeNullableWithAggregatesFilter<"Staff"> | Date | string | null
     emergencyContactName?: StringNullableWithAggregatesFilter<"Staff"> | string | null
     emergencyContactPhone?: StringNullableWithAggregatesFilter<"Staff"> | string | null
+    displayOrder?: IntWithAggregatesFilter<"Staff"> | number
     userId?: StringWithAggregatesFilter<"Staff"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Staff"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Staff"> | Date | string
@@ -10171,6 +11394,57 @@ export namespace Prisma {
     color?: StringNullableWithAggregatesFilter<"PopularShift"> | string | null
   }
 
+  export type PublishedRosterWhereInput = {
+    AND?: PublishedRosterWhereInput | PublishedRosterWhereInput[]
+    OR?: PublishedRosterWhereInput[]
+    NOT?: PublishedRosterWhereInput | PublishedRosterWhereInput[]
+    id?: StringFilter<"PublishedRoster"> | string
+    userId?: StringFilter<"PublishedRoster"> | string
+    weekStart?: DateTimeFilter<"PublishedRoster"> | Date | string
+    createdAt?: DateTimeFilter<"PublishedRoster"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type PublishedRosterOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    weekStart?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type PublishedRosterWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_weekStart?: PublishedRosterUserIdWeekStartCompoundUniqueInput
+    AND?: PublishedRosterWhereInput | PublishedRosterWhereInput[]
+    OR?: PublishedRosterWhereInput[]
+    NOT?: PublishedRosterWhereInput | PublishedRosterWhereInput[]
+    userId?: StringFilter<"PublishedRoster"> | string
+    weekStart?: DateTimeFilter<"PublishedRoster"> | Date | string
+    createdAt?: DateTimeFilter<"PublishedRoster"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId_weekStart">
+
+  export type PublishedRosterOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    weekStart?: SortOrder
+    createdAt?: SortOrder
+    _count?: PublishedRosterCountOrderByAggregateInput
+    _max?: PublishedRosterMaxOrderByAggregateInput
+    _min?: PublishedRosterMinOrderByAggregateInput
+  }
+
+  export type PublishedRosterScalarWhereWithAggregatesInput = {
+    AND?: PublishedRosterScalarWhereWithAggregatesInput | PublishedRosterScalarWhereWithAggregatesInput[]
+    OR?: PublishedRosterScalarWhereWithAggregatesInput[]
+    NOT?: PublishedRosterScalarWhereWithAggregatesInput | PublishedRosterScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PublishedRoster"> | string
+    userId?: StringWithAggregatesFilter<"PublishedRoster"> | string
+    weekStart?: DateTimeWithAggregatesFilter<"PublishedRoster"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"PublishedRoster"> | Date | string
+  }
+
   export type UserCreateInput = {
     id: string
     name: string
@@ -10183,6 +11457,7 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     staffs?: StaffCreateNestedManyWithoutUserInput
+    publishedRosters?: PublishedRosterCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -10197,6 +11472,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     staffs?: StaffUncheckedCreateNestedManyWithoutUserInput
+    publishedRosters?: PublishedRosterUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -10211,6 +11487,7 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     staffs?: StaffUpdateManyWithoutUserNestedInput
+    publishedRosters?: PublishedRosterUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -10225,6 +11502,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     staffs?: StaffUncheckedUpdateManyWithoutUserNestedInput
+    publishedRosters?: PublishedRosterUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -10521,6 +11799,7 @@ export namespace Prisma {
     startDate?: Date | string | null
     emergencyContactName?: string | null
     emergencyContactPhone?: string | null
+    displayOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutStaffsInput
@@ -10538,6 +11817,7 @@ export namespace Prisma {
     startDate?: Date | string | null
     emergencyContactName?: string | null
     emergencyContactPhone?: string | null
+    displayOrder?: number
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10555,6 +11835,7 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
     emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    displayOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutStaffsNestedInput
@@ -10572,6 +11853,7 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
     emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    displayOrder?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10589,6 +11871,7 @@ export namespace Prisma {
     startDate?: Date | string | null
     emergencyContactName?: string | null
     emergencyContactPhone?: string | null
+    displayOrder?: number
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10605,6 +11888,7 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
     emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    displayOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10620,6 +11904,7 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
     emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    displayOrder?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10778,6 +12063,54 @@ export namespace Prisma {
     color?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type PublishedRosterCreateInput = {
+    id?: string
+    weekStart: Date | string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutPublishedRostersInput
+  }
+
+  export type PublishedRosterUncheckedCreateInput = {
+    id?: string
+    userId: string
+    weekStart: Date | string
+    createdAt?: Date | string
+  }
+
+  export type PublishedRosterUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weekStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutPublishedRostersNestedInput
+  }
+
+  export type PublishedRosterUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    weekStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PublishedRosterCreateManyInput = {
+    id?: string
+    userId: string
+    weekStart: Date | string
+    createdAt?: Date | string
+  }
+
+  export type PublishedRosterUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weekStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PublishedRosterUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    weekStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -10842,6 +12175,12 @@ export namespace Prisma {
     none?: StaffWhereInput
   }
 
+  export type PublishedRosterListRelationFilter = {
+    every?: PublishedRosterWhereInput
+    some?: PublishedRosterWhereInput
+    none?: PublishedRosterWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -10856,6 +12195,10 @@ export namespace Prisma {
   }
 
   export type StaffOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PublishedRosterOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -11113,6 +12456,17 @@ export namespace Prisma {
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type ShiftListRelationFilter = {
     every?: ShiftWhereInput
     some?: ShiftWhereInput
@@ -11139,6 +12493,7 @@ export namespace Prisma {
     startDate?: SortOrder
     emergencyContactName?: SortOrder
     emergencyContactPhone?: SortOrder
+    displayOrder?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11146,6 +12501,7 @@ export namespace Prisma {
 
   export type StaffAvgOrderByAggregateInput = {
     hourlyRate?: SortOrder
+    displayOrder?: SortOrder
   }
 
   export type StaffMaxOrderByAggregateInput = {
@@ -11159,6 +12515,7 @@ export namespace Prisma {
     startDate?: SortOrder
     emergencyContactName?: SortOrder
     emergencyContactPhone?: SortOrder
+    displayOrder?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11175,6 +12532,7 @@ export namespace Prisma {
     startDate?: SortOrder
     emergencyContactName?: SortOrder
     emergencyContactPhone?: SortOrder
+    displayOrder?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11182,6 +12540,7 @@ export namespace Prisma {
 
   export type StaffSumOrderByAggregateInput = {
     hourlyRate?: SortOrder
+    displayOrder?: SortOrder
   }
 
   export type EnumStaffRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -11218,6 +12577,22 @@ export namespace Prisma {
     _sum?: NestedDecimalNullableFilter<$PrismaModel>
     _min?: NestedDecimalNullableFilter<$PrismaModel>
     _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type DecimalFilter<$PrismaModel = never> = {
@@ -11338,6 +12713,32 @@ export namespace Prisma {
     breakMinutes?: SortOrder
   }
 
+  export type PublishedRosterUserIdWeekStartCompoundUniqueInput = {
+    userId: string
+    weekStart: Date | string
+  }
+
+  export type PublishedRosterCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    weekStart?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PublishedRosterMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    weekStart?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PublishedRosterMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    weekStart?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type SessionCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -11359,6 +12760,13 @@ export namespace Prisma {
     connect?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
   }
 
+  export type PublishedRosterCreateNestedManyWithoutUserInput = {
+    create?: XOR<PublishedRosterCreateWithoutUserInput, PublishedRosterUncheckedCreateWithoutUserInput> | PublishedRosterCreateWithoutUserInput[] | PublishedRosterUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PublishedRosterCreateOrConnectWithoutUserInput | PublishedRosterCreateOrConnectWithoutUserInput[]
+    createMany?: PublishedRosterCreateManyUserInputEnvelope
+    connect?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
+  }
+
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -11378,6 +12786,13 @@ export namespace Prisma {
     connectOrCreate?: StaffCreateOrConnectWithoutUserInput | StaffCreateOrConnectWithoutUserInput[]
     createMany?: StaffCreateManyUserInputEnvelope
     connect?: StaffWhereUniqueInput | StaffWhereUniqueInput[]
+  }
+
+  export type PublishedRosterUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<PublishedRosterCreateWithoutUserInput, PublishedRosterUncheckedCreateWithoutUserInput> | PublishedRosterCreateWithoutUserInput[] | PublishedRosterUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PublishedRosterCreateOrConnectWithoutUserInput | PublishedRosterCreateOrConnectWithoutUserInput[]
+    createMany?: PublishedRosterCreateManyUserInputEnvelope
+    connect?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -11438,6 +12853,20 @@ export namespace Prisma {
     deleteMany?: StaffScalarWhereInput | StaffScalarWhereInput[]
   }
 
+  export type PublishedRosterUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PublishedRosterCreateWithoutUserInput, PublishedRosterUncheckedCreateWithoutUserInput> | PublishedRosterCreateWithoutUserInput[] | PublishedRosterUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PublishedRosterCreateOrConnectWithoutUserInput | PublishedRosterCreateOrConnectWithoutUserInput[]
+    upsert?: PublishedRosterUpsertWithWhereUniqueWithoutUserInput | PublishedRosterUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PublishedRosterCreateManyUserInputEnvelope
+    set?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
+    disconnect?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
+    delete?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
+    connect?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
+    update?: PublishedRosterUpdateWithWhereUniqueWithoutUserInput | PublishedRosterUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PublishedRosterUpdateManyWithWhereWithoutUserInput | PublishedRosterUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PublishedRosterScalarWhereInput | PublishedRosterScalarWhereInput[]
+  }
+
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -11478,6 +12907,20 @@ export namespace Prisma {
     update?: StaffUpdateWithWhereUniqueWithoutUserInput | StaffUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: StaffUpdateManyWithWhereWithoutUserInput | StaffUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: StaffScalarWhereInput | StaffScalarWhereInput[]
+  }
+
+  export type PublishedRosterUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PublishedRosterCreateWithoutUserInput, PublishedRosterUncheckedCreateWithoutUserInput> | PublishedRosterCreateWithoutUserInput[] | PublishedRosterUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PublishedRosterCreateOrConnectWithoutUserInput | PublishedRosterCreateOrConnectWithoutUserInput[]
+    upsert?: PublishedRosterUpsertWithWhereUniqueWithoutUserInput | PublishedRosterUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PublishedRosterCreateManyUserInputEnvelope
+    set?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
+    disconnect?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
+    delete?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
+    connect?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
+    update?: PublishedRosterUpdateWithWhereUniqueWithoutUserInput | PublishedRosterUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PublishedRosterUpdateManyWithWhereWithoutUserInput | PublishedRosterUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PublishedRosterScalarWhereInput | PublishedRosterScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSessionsInput = {
@@ -11548,6 +12991,14 @@ export namespace Prisma {
     divide?: Decimal | DecimalJsLike | number | string
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type UserUpdateOneRequiredWithoutStaffsNestedInput = {
     create?: XOR<UserCreateWithoutStaffsInput, UserUncheckedCreateWithoutStaffsInput>
     connectOrCreate?: UserCreateOrConnectWithoutStaffsInput
@@ -11604,6 +13055,20 @@ export namespace Prisma {
     upsert?: StaffUpsertWithoutShiftsInput
     connect?: StaffWhereUniqueInput
     update?: XOR<XOR<StaffUpdateToOneWithWhereWithoutShiftsInput, StaffUpdateWithoutShiftsInput>, StaffUncheckedUpdateWithoutShiftsInput>
+  }
+
+  export type UserCreateNestedOneWithoutPublishedRostersInput = {
+    create?: XOR<UserCreateWithoutPublishedRostersInput, UserUncheckedCreateWithoutPublishedRostersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPublishedRostersInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutPublishedRostersNestedInput = {
+    create?: XOR<UserCreateWithoutPublishedRostersInput, UserUncheckedCreateWithoutPublishedRostersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPublishedRostersInput
+    upsert?: UserUpsertWithoutPublishedRostersInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPublishedRostersInput, UserUpdateWithoutPublishedRostersInput>, UserUncheckedUpdateWithoutPublishedRostersInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -11814,6 +13279,33 @@ export namespace Prisma {
     _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type NestedDecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -11922,6 +13414,7 @@ export namespace Prisma {
     startDate?: Date | string | null
     emergencyContactName?: string | null
     emergencyContactPhone?: string | null
+    displayOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     shifts?: ShiftCreateNestedManyWithoutStaffInput
@@ -11938,6 +13431,7 @@ export namespace Prisma {
     startDate?: Date | string | null
     emergencyContactName?: string | null
     emergencyContactPhone?: string | null
+    displayOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     shifts?: ShiftUncheckedCreateNestedManyWithoutStaffInput
@@ -11950,6 +13444,28 @@ export namespace Prisma {
 
   export type StaffCreateManyUserInputEnvelope = {
     data: StaffCreateManyUserInput | StaffCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PublishedRosterCreateWithoutUserInput = {
+    id?: string
+    weekStart: Date | string
+    createdAt?: Date | string
+  }
+
+  export type PublishedRosterUncheckedCreateWithoutUserInput = {
+    id?: string
+    weekStart: Date | string
+    createdAt?: Date | string
+  }
+
+  export type PublishedRosterCreateOrConnectWithoutUserInput = {
+    where: PublishedRosterWhereUniqueInput
+    create: XOR<PublishedRosterCreateWithoutUserInput, PublishedRosterUncheckedCreateWithoutUserInput>
+  }
+
+  export type PublishedRosterCreateManyUserInputEnvelope = {
+    data: PublishedRosterCreateManyUserInput | PublishedRosterCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -12048,9 +13564,36 @@ export namespace Prisma {
     startDate?: DateTimeNullableFilter<"Staff"> | Date | string | null
     emergencyContactName?: StringNullableFilter<"Staff"> | string | null
     emergencyContactPhone?: StringNullableFilter<"Staff"> | string | null
+    displayOrder?: IntFilter<"Staff"> | number
     userId?: StringFilter<"Staff"> | string
     createdAt?: DateTimeFilter<"Staff"> | Date | string
     updatedAt?: DateTimeFilter<"Staff"> | Date | string
+  }
+
+  export type PublishedRosterUpsertWithWhereUniqueWithoutUserInput = {
+    where: PublishedRosterWhereUniqueInput
+    update: XOR<PublishedRosterUpdateWithoutUserInput, PublishedRosterUncheckedUpdateWithoutUserInput>
+    create: XOR<PublishedRosterCreateWithoutUserInput, PublishedRosterUncheckedCreateWithoutUserInput>
+  }
+
+  export type PublishedRosterUpdateWithWhereUniqueWithoutUserInput = {
+    where: PublishedRosterWhereUniqueInput
+    data: XOR<PublishedRosterUpdateWithoutUserInput, PublishedRosterUncheckedUpdateWithoutUserInput>
+  }
+
+  export type PublishedRosterUpdateManyWithWhereWithoutUserInput = {
+    where: PublishedRosterScalarWhereInput
+    data: XOR<PublishedRosterUpdateManyMutationInput, PublishedRosterUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type PublishedRosterScalarWhereInput = {
+    AND?: PublishedRosterScalarWhereInput | PublishedRosterScalarWhereInput[]
+    OR?: PublishedRosterScalarWhereInput[]
+    NOT?: PublishedRosterScalarWhereInput | PublishedRosterScalarWhereInput[]
+    id?: StringFilter<"PublishedRoster"> | string
+    userId?: StringFilter<"PublishedRoster"> | string
+    weekStart?: DateTimeFilter<"PublishedRoster"> | Date | string
+    createdAt?: DateTimeFilter<"PublishedRoster"> | Date | string
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -12064,6 +13607,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
     staffs?: StaffCreateNestedManyWithoutUserInput
+    publishedRosters?: PublishedRosterCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -12077,6 +13621,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     staffs?: StaffUncheckedCreateNestedManyWithoutUserInput
+    publishedRosters?: PublishedRosterUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -12106,6 +13651,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     staffs?: StaffUpdateManyWithoutUserNestedInput
+    publishedRosters?: PublishedRosterUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -12119,6 +13665,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     staffs?: StaffUncheckedUpdateManyWithoutUserNestedInput
+    publishedRosters?: PublishedRosterUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -12132,6 +13679,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
     staffs?: StaffCreateNestedManyWithoutUserInput
+    publishedRosters?: PublishedRosterCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -12145,6 +13693,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     staffs?: StaffUncheckedCreateNestedManyWithoutUserInput
+    publishedRosters?: PublishedRosterUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -12174,6 +13723,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
     staffs?: StaffUpdateManyWithoutUserNestedInput
+    publishedRosters?: PublishedRosterUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -12187,6 +13737,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     staffs?: StaffUncheckedUpdateManyWithoutUserNestedInput
+    publishedRosters?: PublishedRosterUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutStaffsInput = {
@@ -12200,6 +13751,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
+    publishedRosters?: PublishedRosterCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStaffsInput = {
@@ -12213,6 +13765,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    publishedRosters?: PublishedRosterUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStaffsInput = {
@@ -12276,6 +13829,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    publishedRosters?: PublishedRosterUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStaffsInput = {
@@ -12289,6 +13843,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    publishedRosters?: PublishedRosterUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ShiftUpsertWithWhereUniqueWithoutStaffInput = {
@@ -12334,6 +13889,7 @@ export namespace Prisma {
     startDate?: Date | string | null
     emergencyContactName?: string | null
     emergencyContactPhone?: string | null
+    displayOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutStaffsInput
@@ -12350,6 +13906,7 @@ export namespace Prisma {
     startDate?: Date | string | null
     emergencyContactName?: string | null
     emergencyContactPhone?: string | null
+    displayOrder?: number
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12382,6 +13939,7 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
     emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    displayOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutStaffsNestedInput
@@ -12398,9 +13956,82 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
     emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    displayOrder?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCreateWithoutPublishedRostersInput = {
+    id: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    company?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    staffs?: StaffCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutPublishedRostersInput = {
+    id: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    company?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    staffs?: StaffUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutPublishedRostersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPublishedRostersInput, UserUncheckedCreateWithoutPublishedRostersInput>
+  }
+
+  export type UserUpsertWithoutPublishedRostersInput = {
+    update: XOR<UserUpdateWithoutPublishedRostersInput, UserUncheckedUpdateWithoutPublishedRostersInput>
+    create: XOR<UserCreateWithoutPublishedRostersInput, UserUncheckedCreateWithoutPublishedRostersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutPublishedRostersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPublishedRostersInput, UserUncheckedUpdateWithoutPublishedRostersInput>
+  }
+
+  export type UserUpdateWithoutPublishedRostersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    staffs?: StaffUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPublishedRostersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    staffs?: StaffUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type SessionCreateManyUserInput = {
@@ -12439,8 +14070,15 @@ export namespace Prisma {
     startDate?: Date | string | null
     emergencyContactName?: string | null
     emergencyContactPhone?: string | null
+    displayOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type PublishedRosterCreateManyUserInput = {
+    id?: string
+    weekStart: Date | string
+    createdAt?: Date | string
   }
 
   export type SessionUpdateWithoutUserInput = {
@@ -12529,6 +14167,7 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
     emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    displayOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shifts?: ShiftUpdateManyWithoutStaffNestedInput
@@ -12545,6 +14184,7 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
     emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    displayOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shifts?: ShiftUncheckedUpdateManyWithoutStaffNestedInput
@@ -12561,8 +14201,27 @@ export namespace Prisma {
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
     emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    displayOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PublishedRosterUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weekStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PublishedRosterUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weekStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PublishedRosterUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weekStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ShiftCreateManyStaffInput = {

@@ -4,16 +4,23 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 
-/* --------------------------- Types --------------------------- */
-
-type AuthResult =
+export type AuthResult =
   | { success: true }
-  | { success: false; error: Record<string, unknown> };
+  | { success: false; errors: Record<string, string[]> };
 
-/* --------------------------- Schemas --------------------------- */
+function parseForm<T>(formData: FormData, schema: z.ZodSchema<T>) {
+  const parsed = schema.safeParse(Object.fromEntries(formData.entries()));
+  if (parsed.success) return { data: parsed.data, errors: null };
+  const flat = parsed.error.flatten();
+  return {
+    data: null,
+    errors: { _form: flat.formErrors, ...flat.fieldErrors } as Record<
+      string,
+      string[]
+    >,
+  };
+}
 
 const signUpSchema = z
   .object({
@@ -23,7 +30,7 @@ const signUpSchema = z
     confirmPassword: z.string().min(6, "Please confirm your password"),
     company: z.string().optional(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((d) => d.password === d.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
@@ -33,83 +40,63 @@ const signInSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-/* --------------------------- Sign Up --------------------------- */
+export async function signUpAction(
+  _prev: AuthResult | null,
+  formData: FormData
+): Promise<AuthResult> {
+  const { data, errors } = parseForm(formData, signUpSchema);
+  if (errors) return { success: false, errors };
 
-export async function signUpAction(formData: FormData): Promise<AuthResult> {
-  const entries = Object.fromEntries(formData.entries());
-  const parsed = signUpSchema.safeParse(entries);
+  const { name, email, password, company } = data!;
 
-  if (!parsed.success) {
-    return {
-      success: false,
-      error: z.treeifyError(parsed.error).properties ?? {},
-    };
-  }
-
-  const { name, email, password, company } = parsed.data;
-
-  let createdUser;
   try {
-    createdUser = await auth.api.signUpEmail({
+    const { user } = await auth.api.signUpEmail({
       body: { email, password, name },
       headers: await headers(),
     });
+    try {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { company: company?.trim() || null },
+      });
+    } catch {
+      return {
+        success: false,
+        errors: {
+          _form: [
+            "Account created but failed to save company. Please contact support.",
+          ],
+        },
+      };
+    }
+    return { success: true };
   } catch {
     return {
       success: false,
-      error: { _form: ["This email is already registered. Please sign in instead."] },
+      errors: {
+        _form: ["This email is already registered. Please sign in instead."],
+      },
     };
   }
-
-  try {
-    await prisma.user.update({
-      where: { id: createdUser.user.id },
-      data: { company: company?.trim() || null },
-    });
-  } catch {
-    return {
-      success: false,
-      error: { _form: ["Account created but failed to save company. Please contact support."] },
-    };
-  }
-
-  return { success: true };
 }
 
-/* --------------------------- Sign In --------------------------- */
-
-export async function signInAction(formData: FormData): Promise<AuthResult> {
-  const entries = Object.fromEntries(formData.entries());
-  const parsed = signInSchema.safeParse(entries);
-
-  if (!parsed.success) {
-    return {
-      success: false,
-      error: z.treeifyError(parsed.error).properties ?? {},
-    };
-  }
-
-  const { email, password } = parsed.data;
+export async function signInAction(
+  _prev: AuthResult | null,
+  formData: FormData
+): Promise<AuthResult> {
+  const { data, errors } = parseForm(formData, signInSchema);
+  if (errors) return { success: false, errors };
 
   try {
     await auth.api.signInEmail({
-      body: { email, password },
+      body: { email: data!.email, password: data!.password },
       headers: await headers(),
     });
+    return { success: true };
   } catch {
     return {
       success: false,
-      error: { _form: ["Invalid email or password."] },
+      errors: { _form: ["Invalid email or password."] },
     };
   }
-
-  return { success: true };
-}
-
-/* --------------------------- Sign Out --------------------------- */
-
-export async function signOutAction(): Promise<void> {
-  await auth.api.signOut({ headers: await headers() }); 
-  revalidatePath("/", "layout");
-  redirect("/");
 }
