@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { signUpAction } from "@/app/actions/auth";
@@ -30,7 +29,6 @@ function SignUpSubmitButton() {
 }
 
 export function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
-  const router = useRouter();
   const handled = useRef(false);
   const [state, formAction] = useActionState(signUpAction, null);
 
@@ -39,10 +37,10 @@ export function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
       handled.current = true;
       toast.success("Account created successfully");
       onSuccess?.();
-      router.push("/dashboard");
+      window.location.href = "/dashboard";
     }
     if (!state?.success) handled.current = false;
-  }, [state, onSuccess, router]);
+  }, [state, onSuccess]);
 
   const errors = state?.success === false ? state.errors : undefined;
 

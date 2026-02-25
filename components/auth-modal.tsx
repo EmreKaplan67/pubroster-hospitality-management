@@ -11,7 +11,6 @@ import {
 import { SignInForm } from "@/components/sign-in-form";
 import { SignUpForm } from "@/components/sign-up-form";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 
 type AuthModalProps = {
   open: boolean;
@@ -24,7 +23,6 @@ export function AuthModal({
   onOpenChange,
   initialMode = "sign-in",
 }: AuthModalProps) {
-  const router = useRouter();
   const [mode, setMode] = useState<"sign-in" | "sign-up">(initialMode);
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -34,9 +32,6 @@ export function AuthModal({
 
   const handleSuccess = () => {
     handleOpenChange(false);
-
-    router.refresh();
-    router.push("/dashboard");
   };
 
   

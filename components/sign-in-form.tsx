@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { signInAction } from "@/app/actions/auth";
@@ -25,24 +24,20 @@ function SignInSubmitButton() {
 }
 
 export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
-  const router = useRouter();
   const handled = useRef(false);
   const [state, formAction] = useActionState(signInAction, null);
 
   useEffect(() => {
-    console.log("[signIn] useEffect fired, state:", state);
     if (state?.success && !handled.current) {
       handled.current = true;
-      console.log("[signIn] success — showing toast, closing modal, pushing /dashboard");
       toast.success("Signed in successfully");
       onSuccess?.();
-      router.push("/dashboard");
+      window.location.href = "/dashboard";
     }
     if (!state?.success && state !== null) {
       handled.current = false;
-      console.log("[signIn] action returned failure:", state);
     }
-  }, [state, onSuccess, router]);
+  }, [state, onSuccess]);
 
   const errors = state?.success === false ? state.errors : undefined;
 
