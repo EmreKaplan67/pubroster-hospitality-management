@@ -85,15 +85,21 @@ export async function signInAction(
   formData: FormData
 ): Promise<AuthResult> {
   const { data, errors } = parseForm(formData, signInSchema);
-  if (errors) return { success: false, errors };
+  if (errors) {
+    console.log("[signIn] validation failed:", errors);
+    return { success: false, errors };
+  }
 
   try {
-    await auth.api.signInEmail({
+    console.log("[signIn] calling auth.api.signInEmail for", data!.email);
+    const result = await auth.api.signInEmail({
       body: { email: data!.email, password: data!.password },
       headers: await headers(),
     });
+    console.log("[signIn] server action succeeded, session token exists:", !!result?.token);
     return { success: true };
-  } catch {
+  } catch (err) {
+    console.error("[signIn] server action failed:", err);
     return {
       success: false,
       errors: { _form: ["Invalid email or password."] },
