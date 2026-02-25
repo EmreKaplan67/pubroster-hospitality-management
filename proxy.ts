@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { auth } from "@/lib/auth"; // your server auth instance
 
-export function proxy(request: NextRequest) {
-  const sessionCookie = request.cookies.get("better-auth.session_token");
+export async function proxy(request: NextRequest) {
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
 
-  if (!sessionCookie?.value) {
+  if (!session) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
@@ -12,5 +15,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard", "/dashboard/:path*"],
+  matcher: ["/dashboard/:path*"],
 };
