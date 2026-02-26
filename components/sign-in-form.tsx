@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
-import { useFormStatus } from "react-dom";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { signInAction } from "@/app/actions/auth";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -14,40 +14,50 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
-function SignInSubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending}>
-      {pending ? "Signing in…" : "Sign in"}
-    </Button>
-  );
-}
-
 export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
-  const handled = useRef(false);
-  const [state, formAction] = useActionState(signInAction, null);
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (state?.success && !handled.current) {
-      handled.current = true;
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    if (!email?.trim() || !password) {
+      setError("Email and password are required");
+      return;
+    }
+
+    setPending(true);
+    const { data, error: err } = await authClient.signIn.email({
+      email: email.trim(),
+      password,
+    });
+    setPending(false);
+
+    if (err) {
+      setError(err.message ?? "Invalid email or password");
+      return;
+    }
+
+    if (data) {
       toast.success("Signed in successfully");
       onSuccess?.();
-      window.location.href = "/dashboard";
+      router.refresh();
+      router.push("/dashboard");
     }
-    if (!state?.success && state !== null) {
-      handled.current = false;
-    }
-  }, [state, onSuccess]);
-
-  const errors = state?.success === false ? state.errors : undefined;
+  }
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <FieldSet>
         <FieldGroup>
-          {errors?._form?.length ? (
+          {error ? (
             <div role="alert" className="text-destructive text-sm">
-              {errors._form.join(" ")}
+              {error}
             </div>
           ) : null}
           <Field>
@@ -59,7 +69,6 @@ export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
               placeholder="you@example.com"
               autoComplete="email"
               required
-              aria-invalid={!!errors?.email?.length}
             />
           </Field>
           <Field>
@@ -70,12 +79,13 @@ export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
               autoComplete="current-password"
               placeholder="********"
               required
-              aria-invalid={!!errors?.password?.length}
             />
           </Field>
         </FieldGroup>
       </FieldSet>
-      <SignInSubmitButton />
+      <Button type="submit" disabled={pending}>
+        {pending ? "Signing in…" : "Sign in"}
+      </Button>
     </form>
   );
 }

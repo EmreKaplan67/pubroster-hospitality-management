@@ -5,19 +5,6 @@ import { nextCookies } from "better-auth/next-js";
 
 const baseURL = process.env.BETTER_AUTH_URL;
 
-function getRootDomain(url: string): string | undefined {
-  try {
-    const host = new URL(url).hostname;
-    const parts = host.split(".");
-    if (parts.length >= 2) {
-      return parts.slice(-2).join(".");
-    }
-    return host;
-  } catch {
-    return undefined;
-  }
-}
-
 export const auth = betterAuth({
   baseURL,
   database: prismaAdapter(prisma, {
@@ -30,19 +17,14 @@ export const auth = betterAuth({
   trustedOrigins: baseURL
     ? (() => {
         const b = baseURL.replace(/\/$/, "");
-        const withWww = b.includes("://www.") ? b : b.replace(/^(https?:\/\/)/, "$1www.");
+        const withWww = b.includes("://www.")
+          ? b
+          : b.replace(/^(https?:\/\/)/, "$1www.");
         const withoutWww = b.replace(/^(https?:\/\/)www\./, "$1");
         return [...new Set([b, withWww, withoutWww])];
       })()
     : undefined,
   advanced: {
     useSecureCookies: process.env.NODE_ENV === "production",
-    ...(baseURL &&
-      getRootDomain(baseURL) && {
-        crossSubDomainCookies: {
-          enabled: true,
-          domain: getRootDomain(baseURL)!,
-        },
-      }),
   },
 });
