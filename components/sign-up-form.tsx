@@ -37,7 +37,7 @@ export function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
       handled.current = true;
       toast.success("Account created successfully");
       onSuccess?.();
-      window.location.href = "/dashboard";
+      window.location.href = "/dashboard/schedule";
     }
     if (!state?.success) handled.current = false;
   }, [state, onSuccess]);

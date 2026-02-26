@@ -21,7 +21,7 @@ export function AuthButton() {
   if (session) {
     return (
       <Button asChild size="default" variant="outline">
-        <Link href="/dashboard">Get Started</Link>
+        <Link href="/dashboard/schedule">Get Started</Link>
       </Button>
     );
   }

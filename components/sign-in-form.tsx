@@ -47,7 +47,7 @@ export function SignInForm({ onSuccess }: { onSuccess?: () => void }) {
       toast.success("Signed in successfully");
       onSuccess?.();
       router.refresh();
-      router.push("/dashboard");
+      router.push("/dashboard/schedule");
     }
   }
 
