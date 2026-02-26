@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 
@@ -9,6 +10,7 @@ export function SignOutButton() {
 
   async function handleSignOut() {
     await authClient.signOut();
+    toast.success("Signed out successfully");
     router.push("/");
   }
 

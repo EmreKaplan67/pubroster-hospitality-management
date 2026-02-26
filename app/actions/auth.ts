@@ -35,11 +35,6 @@ const signUpSchema = z
     path: ["confirmPassword"],
   });
 
-const signInSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
 export async function signUpAction(
   _prev: AuthResult | null,
   formData: FormData
@@ -76,33 +71,6 @@ export async function signUpAction(
       errors: {
         _form: ["This email is already registered. Please sign in instead."],
       },
-    };
-  }
-}
-
-export async function signInAction(
-  _prev: AuthResult | null,
-  formData: FormData
-): Promise<AuthResult> {
-  const { data, errors } = parseForm(formData, signInSchema);
-  if (errors) {
-    console.log("[signIn] validation failed:", errors);
-    return { success: false, errors };
-  }
-
-  try {
-    console.log("[signIn] calling auth.api.signInEmail for", data!.email);
-    const result = await auth.api.signInEmail({
-      body: { email: data!.email, password: data!.password },
-      headers: await headers(),
-    });
-    console.log("[signIn] server action succeeded, session token exists:", !!result?.token);
-    return { success: true };
-  } catch (err) {
-    console.error("[signIn] server action failed:", err);
-    return {
-      success: false,
-      errors: { _form: ["Invalid email or password."] },
     };
   }
 }

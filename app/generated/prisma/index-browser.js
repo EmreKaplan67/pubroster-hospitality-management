@@ -199,6 +199,7 @@ exports.Prisma.ShiftScalarFieldEnum = {
 
 exports.Prisma.PopularShiftScalarFieldEnum = {
   id: 'id',
+  userId: 'userId',
   startTime: 'startTime',
   endTime: 'endTime',
   hours: 'hours',

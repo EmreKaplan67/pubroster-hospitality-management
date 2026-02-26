@@ -4,7 +4,6 @@ import { auth } from "@/lib/auth";
 import { Nav } from "@/components/Nav";
 import { NavLink } from "@/components/nav-link";
 import { SignOutButton } from "@/components/sign-out-button";
-import { Toaster } from "@/components/ui/sonner";
 
 export default async function DashboardLayout({
   children,
@@ -32,7 +31,6 @@ export default async function DashboardLayout({
         <SignOutButton />
       </Nav>
       <div className="container my-6">{children}</div>
-      <Toaster />
     </div>
   );
 }

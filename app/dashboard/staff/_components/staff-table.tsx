@@ -108,6 +108,7 @@ export function StaffTable({ staff }: StaffTableProps) {
 
   return (
     <div className="space-y-4">
+      <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -223,6 +224,7 @@ export function StaffTable({ staff }: StaffTableProps) {
           </TableRow>
         </TableFooter>
       </Table>
+      </div>
 
       <StaffFormModal
         key={addModalOpen ? "add-open" : "add-closed"}

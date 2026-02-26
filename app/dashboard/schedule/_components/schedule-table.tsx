@@ -276,7 +276,7 @@ export function ScheduleTable({ staff, popularShifts, shifts, weekStart, isEdita
   const RowComponent = canReorderRows ? SortableTableRow : NormalTableRow;
 
   return (
-    <div className="rounded-lg border border-border bg-card shadow-sm">
+    <div className="rounded-lg border border-border bg-card shadow-sm overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">

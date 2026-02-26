@@ -110,6 +110,7 @@ export async function createPopularShiftAction(
   try {
     await prisma.popularShift.create({
       data: {
+        userId: session.user.id,
         startTime: startDate,
         endTime: endDate,
         hours,
@@ -139,7 +140,7 @@ export async function deletePopularShiftAction(popularShiftId: string): Promise<
 
   try {
     await prisma.popularShift.delete({
-      where: { id: popularShiftId },
+      where: { id: popularShiftId, userId: session.user.id },
     });
     revalidatePath("/dashboard/schedule");
     return { success: true };

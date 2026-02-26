@@ -34,8 +34,6 @@ export function AuthModal({
     handleOpenChange(false);
   };
 
-  
-
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-[25rem]">

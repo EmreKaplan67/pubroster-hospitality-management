@@ -1539,6 +1539,7 @@ export namespace Prisma {
     accounts: number
     staffs: number
     publishedRosters: number
+    popularShifts: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1546,6 +1547,7 @@ export namespace Prisma {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     staffs?: boolean | UserCountOutputTypeCountStaffsArgs
     publishedRosters?: boolean | UserCountOutputTypeCountPublishedRostersArgs
+    popularShifts?: boolean | UserCountOutputTypeCountPopularShiftsArgs
   }
 
   // Custom InputTypes
@@ -1585,6 +1587,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountPublishedRostersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PublishedRosterWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountPopularShiftsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PopularShiftWhereInput
   }
 
 
@@ -1815,6 +1824,7 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     staffs?: boolean | User$staffsArgs<ExtArgs>
     publishedRosters?: boolean | User$publishedRostersArgs<ExtArgs>
+    popularShifts?: boolean | User$popularShiftsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1857,6 +1867,7 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     staffs?: boolean | User$staffsArgs<ExtArgs>
     publishedRosters?: boolean | User$publishedRostersArgs<ExtArgs>
+    popularShifts?: boolean | User$popularShiftsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1869,6 +1880,7 @@ export namespace Prisma {
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       staffs: Prisma.$StaffPayload<ExtArgs>[]
       publishedRosters: Prisma.$PublishedRosterPayload<ExtArgs>[]
+      popularShifts: Prisma.$PopularShiftPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2277,6 +2289,7 @@ export namespace Prisma {
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     staffs<T extends User$staffsArgs<ExtArgs> = {}>(args?: Subset<T, User$staffsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StaffPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     publishedRosters<T extends User$publishedRostersArgs<ExtArgs> = {}>(args?: Subset<T, User$publishedRostersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublishedRosterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    popularShifts<T extends User$popularShiftsArgs<ExtArgs> = {}>(args?: Subset<T, User$popularShiftsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PopularShiftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2795,6 +2808,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PublishedRosterScalarFieldEnum | PublishedRosterScalarFieldEnum[]
+  }
+
+  /**
+   * User.popularShifts
+   */
+  export type User$popularShiftsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PopularShift
+     */
+    select?: PopularShiftSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PopularShift
+     */
+    omit?: PopularShiftOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftInclude<ExtArgs> | null
+    where?: PopularShiftWhereInput
+    orderBy?: PopularShiftOrderByWithRelationInput | PopularShiftOrderByWithRelationInput[]
+    cursor?: PopularShiftWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PopularShiftScalarFieldEnum | PopularShiftScalarFieldEnum[]
   }
 
   /**
@@ -8511,6 +8548,7 @@ export namespace Prisma {
 
   export type PopularShiftMinAggregateOutputType = {
     id: string | null
+    userId: string | null
     startTime: Date | null
     endTime: Date | null
     hours: Decimal | null
@@ -8520,6 +8558,7 @@ export namespace Prisma {
 
   export type PopularShiftMaxAggregateOutputType = {
     id: string | null
+    userId: string | null
     startTime: Date | null
     endTime: Date | null
     hours: Decimal | null
@@ -8529,6 +8568,7 @@ export namespace Prisma {
 
   export type PopularShiftCountAggregateOutputType = {
     id: number
+    userId: number
     startTime: number
     endTime: number
     hours: number
@@ -8550,6 +8590,7 @@ export namespace Prisma {
 
   export type PopularShiftMinAggregateInputType = {
     id?: true
+    userId?: true
     startTime?: true
     endTime?: true
     hours?: true
@@ -8559,6 +8600,7 @@ export namespace Prisma {
 
   export type PopularShiftMaxAggregateInputType = {
     id?: true
+    userId?: true
     startTime?: true
     endTime?: true
     hours?: true
@@ -8568,6 +8610,7 @@ export namespace Prisma {
 
   export type PopularShiftCountAggregateInputType = {
     id?: true
+    userId?: true
     startTime?: true
     endTime?: true
     hours?: true
@@ -8664,6 +8707,7 @@ export namespace Prisma {
 
   export type PopularShiftGroupByOutputType = {
     id: string
+    userId: string
     startTime: Date
     endTime: Date
     hours: Decimal
@@ -8692,33 +8736,40 @@ export namespace Prisma {
 
   export type PopularShiftSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    userId?: boolean
     startTime?: boolean
     endTime?: boolean
     hours?: boolean
     breakMinutes?: boolean
     color?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["popularShift"]>
 
   export type PopularShiftSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    userId?: boolean
     startTime?: boolean
     endTime?: boolean
     hours?: boolean
     breakMinutes?: boolean
     color?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["popularShift"]>
 
   export type PopularShiftSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    userId?: boolean
     startTime?: boolean
     endTime?: boolean
     hours?: boolean
     breakMinutes?: boolean
     color?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["popularShift"]>
 
   export type PopularShiftSelectScalar = {
     id?: boolean
+    userId?: boolean
     startTime?: boolean
     endTime?: boolean
     hours?: boolean
@@ -8726,13 +8777,25 @@ export namespace Prisma {
     color?: boolean
   }
 
-  export type PopularShiftOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "startTime" | "endTime" | "hours" | "breakMinutes" | "color", ExtArgs["result"]["popularShift"]>
+  export type PopularShiftOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "startTime" | "endTime" | "hours" | "breakMinutes" | "color", ExtArgs["result"]["popularShift"]>
+  export type PopularShiftInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PopularShiftIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PopularShiftIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $PopularShiftPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "PopularShift"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      userId: string
       startTime: Date
       endTime: Date
       hours: Prisma.Decimal
@@ -9132,6 +9195,7 @@ export namespace Prisma {
    */
   export interface Prisma__PopularShiftClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9162,6 +9226,7 @@ export namespace Prisma {
    */
   interface PopularShiftFieldRefs {
     readonly id: FieldRef<"PopularShift", 'String'>
+    readonly userId: FieldRef<"PopularShift", 'String'>
     readonly startTime: FieldRef<"PopularShift", 'DateTime'>
     readonly endTime: FieldRef<"PopularShift", 'DateTime'>
     readonly hours: FieldRef<"PopularShift", 'Decimal'>
@@ -9184,6 +9249,10 @@ export namespace Prisma {
      */
     omit?: PopularShiftOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftInclude<ExtArgs> | null
+    /**
      * Filter, which PopularShift to fetch.
      */
     where: PopularShiftWhereUniqueInput
@@ -9202,6 +9271,10 @@ export namespace Prisma {
      */
     omit?: PopularShiftOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftInclude<ExtArgs> | null
+    /**
      * Filter, which PopularShift to fetch.
      */
     where: PopularShiftWhereUniqueInput
@@ -9219,6 +9292,10 @@ export namespace Prisma {
      * Omit specific fields from the PopularShift
      */
     omit?: PopularShiftOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftInclude<ExtArgs> | null
     /**
      * Filter, which PopularShift to fetch.
      */
@@ -9268,6 +9345,10 @@ export namespace Prisma {
      */
     omit?: PopularShiftOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftInclude<ExtArgs> | null
+    /**
      * Filter, which PopularShift to fetch.
      */
     where?: PopularShiftWhereInput
@@ -9316,6 +9397,10 @@ export namespace Prisma {
      */
     omit?: PopularShiftOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftInclude<ExtArgs> | null
+    /**
      * Filter, which PopularShifts to fetch.
      */
     where?: PopularShiftWhereInput
@@ -9359,6 +9444,10 @@ export namespace Prisma {
      */
     omit?: PopularShiftOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftInclude<ExtArgs> | null
+    /**
      * The data needed to create a PopularShift.
      */
     data: XOR<PopularShiftCreateInput, PopularShiftUncheckedCreateInput>
@@ -9392,6 +9481,10 @@ export namespace Prisma {
      */
     data: PopularShiftCreateManyInput | PopularShiftCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9406,6 +9499,10 @@ export namespace Prisma {
      * Omit specific fields from the PopularShift
      */
     omit?: PopularShiftOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftInclude<ExtArgs> | null
     /**
      * The data needed to update a PopularShift.
      */
@@ -9458,6 +9555,10 @@ export namespace Prisma {
      * Limit how many PopularShifts to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9472,6 +9573,10 @@ export namespace Prisma {
      * Omit specific fields from the PopularShift
      */
     omit?: PopularShiftOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftInclude<ExtArgs> | null
     /**
      * The filter to search for the PopularShift to update in case it exists.
      */
@@ -9498,6 +9603,10 @@ export namespace Prisma {
      * Omit specific fields from the PopularShift
      */
     omit?: PopularShiftOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftInclude<ExtArgs> | null
     /**
      * Filter which PopularShift to delete.
      */
@@ -9530,6 +9639,10 @@ export namespace Prisma {
      * Omit specific fields from the PopularShift
      */
     omit?: PopularShiftOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PopularShiftInclude<ExtArgs> | null
   }
 
 
@@ -10689,6 +10802,7 @@ export namespace Prisma {
 
   export const PopularShiftScalarFieldEnum: {
     id: 'id',
+    userId: 'userId',
     startTime: 'startTime',
     endTime: 'endTime',
     hours: 'hours',
@@ -10862,6 +10976,7 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     staffs?: StaffListRelationFilter
     publishedRosters?: PublishedRosterListRelationFilter
+    popularShifts?: PopularShiftListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -10877,6 +10992,7 @@ export namespace Prisma {
     accounts?: AccountOrderByRelationAggregateInput
     staffs?: StaffOrderByRelationAggregateInput
     publishedRosters?: PublishedRosterOrderByRelationAggregateInput
+    popularShifts?: PopularShiftOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -10895,6 +11011,7 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     staffs?: StaffListRelationFilter
     publishedRosters?: PublishedRosterListRelationFilter
+    popularShifts?: PopularShiftListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -11340,20 +11457,24 @@ export namespace Prisma {
     OR?: PopularShiftWhereInput[]
     NOT?: PopularShiftWhereInput | PopularShiftWhereInput[]
     id?: StringFilter<"PopularShift"> | string
+    userId?: StringFilter<"PopularShift"> | string
     startTime?: DateTimeFilter<"PopularShift"> | Date | string
     endTime?: DateTimeFilter<"PopularShift"> | Date | string
     hours?: DecimalFilter<"PopularShift"> | Decimal | DecimalJsLike | number | string
     breakMinutes?: DecimalFilter<"PopularShift"> | Decimal | DecimalJsLike | number | string
     color?: StringNullableFilter<"PopularShift"> | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type PopularShiftOrderByWithRelationInput = {
     id?: SortOrder
+    userId?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     hours?: SortOrder
     breakMinutes?: SortOrder
     color?: SortOrderInput | SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type PopularShiftWhereUniqueInput = Prisma.AtLeast<{
@@ -11361,15 +11482,18 @@ export namespace Prisma {
     AND?: PopularShiftWhereInput | PopularShiftWhereInput[]
     OR?: PopularShiftWhereInput[]
     NOT?: PopularShiftWhereInput | PopularShiftWhereInput[]
+    userId?: StringFilter<"PopularShift"> | string
     startTime?: DateTimeFilter<"PopularShift"> | Date | string
     endTime?: DateTimeFilter<"PopularShift"> | Date | string
     hours?: DecimalFilter<"PopularShift"> | Decimal | DecimalJsLike | number | string
     breakMinutes?: DecimalFilter<"PopularShift"> | Decimal | DecimalJsLike | number | string
     color?: StringNullableFilter<"PopularShift"> | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type PopularShiftOrderByWithAggregationInput = {
     id?: SortOrder
+    userId?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     hours?: SortOrder
@@ -11387,6 +11511,7 @@ export namespace Prisma {
     OR?: PopularShiftScalarWhereWithAggregatesInput[]
     NOT?: PopularShiftScalarWhereWithAggregatesInput | PopularShiftScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"PopularShift"> | string
+    userId?: StringWithAggregatesFilter<"PopularShift"> | string
     startTime?: DateTimeWithAggregatesFilter<"PopularShift"> | Date | string
     endTime?: DateTimeWithAggregatesFilter<"PopularShift"> | Date | string
     hours?: DecimalWithAggregatesFilter<"PopularShift"> | Decimal | DecimalJsLike | number | string
@@ -11458,6 +11583,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     staffs?: StaffCreateNestedManyWithoutUserInput
     publishedRosters?: PublishedRosterCreateNestedManyWithoutUserInput
+    popularShifts?: PopularShiftCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -11473,6 +11599,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     staffs?: StaffUncheckedCreateNestedManyWithoutUserInput
     publishedRosters?: PublishedRosterUncheckedCreateNestedManyWithoutUserInput
+    popularShifts?: PopularShiftUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -11488,6 +11615,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     staffs?: StaffUpdateManyWithoutUserNestedInput
     publishedRosters?: PublishedRosterUpdateManyWithoutUserNestedInput
+    popularShifts?: PopularShiftUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -11503,6 +11631,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     staffs?: StaffUncheckedUpdateManyWithoutUserNestedInput
     publishedRosters?: PublishedRosterUncheckedUpdateManyWithoutUserNestedInput
+    popularShifts?: PopularShiftUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -12007,10 +12136,12 @@ export namespace Prisma {
     hours: Decimal | DecimalJsLike | number | string
     breakMinutes: Decimal | DecimalJsLike | number | string
     color?: string | null
+    user: UserCreateNestedOneWithoutPopularShiftsInput
   }
 
   export type PopularShiftUncheckedCreateInput = {
     id?: string
+    userId: string
     startTime: Date | string
     endTime: Date | string
     hours: Decimal | DecimalJsLike | number | string
@@ -12025,10 +12156,12 @@ export namespace Prisma {
     hours?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     breakMinutes?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     color?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutPopularShiftsNestedInput
   }
 
   export type PopularShiftUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     hours?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -12038,6 +12171,7 @@ export namespace Prisma {
 
   export type PopularShiftCreateManyInput = {
     id?: string
+    userId: string
     startTime: Date | string
     endTime: Date | string
     hours: Decimal | DecimalJsLike | number | string
@@ -12056,6 +12190,7 @@ export namespace Prisma {
 
   export type PopularShiftUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     hours?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -12181,6 +12316,12 @@ export namespace Prisma {
     none?: PublishedRosterWhereInput
   }
 
+  export type PopularShiftListRelationFilter = {
+    every?: PopularShiftWhereInput
+    some?: PopularShiftWhereInput
+    none?: PopularShiftWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -12199,6 +12340,10 @@ export namespace Prisma {
   }
 
   export type PublishedRosterOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PopularShiftOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12678,6 +12823,7 @@ export namespace Prisma {
 
   export type PopularShiftCountOrderByAggregateInput = {
     id?: SortOrder
+    userId?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     hours?: SortOrder
@@ -12692,6 +12838,7 @@ export namespace Prisma {
 
   export type PopularShiftMaxOrderByAggregateInput = {
     id?: SortOrder
+    userId?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     hours?: SortOrder
@@ -12701,6 +12848,7 @@ export namespace Prisma {
 
   export type PopularShiftMinOrderByAggregateInput = {
     id?: SortOrder
+    userId?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
     hours?: SortOrder
@@ -12767,6 +12915,13 @@ export namespace Prisma {
     connect?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
   }
 
+  export type PopularShiftCreateNestedManyWithoutUserInput = {
+    create?: XOR<PopularShiftCreateWithoutUserInput, PopularShiftUncheckedCreateWithoutUserInput> | PopularShiftCreateWithoutUserInput[] | PopularShiftUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PopularShiftCreateOrConnectWithoutUserInput | PopularShiftCreateOrConnectWithoutUserInput[]
+    createMany?: PopularShiftCreateManyUserInputEnvelope
+    connect?: PopularShiftWhereUniqueInput | PopularShiftWhereUniqueInput[]
+  }
+
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -12793,6 +12948,13 @@ export namespace Prisma {
     connectOrCreate?: PublishedRosterCreateOrConnectWithoutUserInput | PublishedRosterCreateOrConnectWithoutUserInput[]
     createMany?: PublishedRosterCreateManyUserInputEnvelope
     connect?: PublishedRosterWhereUniqueInput | PublishedRosterWhereUniqueInput[]
+  }
+
+  export type PopularShiftUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<PopularShiftCreateWithoutUserInput, PopularShiftUncheckedCreateWithoutUserInput> | PopularShiftCreateWithoutUserInput[] | PopularShiftUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PopularShiftCreateOrConnectWithoutUserInput | PopularShiftCreateOrConnectWithoutUserInput[]
+    createMany?: PopularShiftCreateManyUserInputEnvelope
+    connect?: PopularShiftWhereUniqueInput | PopularShiftWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -12867,6 +13029,20 @@ export namespace Prisma {
     deleteMany?: PublishedRosterScalarWhereInput | PublishedRosterScalarWhereInput[]
   }
 
+  export type PopularShiftUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PopularShiftCreateWithoutUserInput, PopularShiftUncheckedCreateWithoutUserInput> | PopularShiftCreateWithoutUserInput[] | PopularShiftUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PopularShiftCreateOrConnectWithoutUserInput | PopularShiftCreateOrConnectWithoutUserInput[]
+    upsert?: PopularShiftUpsertWithWhereUniqueWithoutUserInput | PopularShiftUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PopularShiftCreateManyUserInputEnvelope
+    set?: PopularShiftWhereUniqueInput | PopularShiftWhereUniqueInput[]
+    disconnect?: PopularShiftWhereUniqueInput | PopularShiftWhereUniqueInput[]
+    delete?: PopularShiftWhereUniqueInput | PopularShiftWhereUniqueInput[]
+    connect?: PopularShiftWhereUniqueInput | PopularShiftWhereUniqueInput[]
+    update?: PopularShiftUpdateWithWhereUniqueWithoutUserInput | PopularShiftUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PopularShiftUpdateManyWithWhereWithoutUserInput | PopularShiftUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PopularShiftScalarWhereInput | PopularShiftScalarWhereInput[]
+  }
+
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -12921,6 +13097,20 @@ export namespace Prisma {
     update?: PublishedRosterUpdateWithWhereUniqueWithoutUserInput | PublishedRosterUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: PublishedRosterUpdateManyWithWhereWithoutUserInput | PublishedRosterUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: PublishedRosterScalarWhereInput | PublishedRosterScalarWhereInput[]
+  }
+
+  export type PopularShiftUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PopularShiftCreateWithoutUserInput, PopularShiftUncheckedCreateWithoutUserInput> | PopularShiftCreateWithoutUserInput[] | PopularShiftUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PopularShiftCreateOrConnectWithoutUserInput | PopularShiftCreateOrConnectWithoutUserInput[]
+    upsert?: PopularShiftUpsertWithWhereUniqueWithoutUserInput | PopularShiftUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PopularShiftCreateManyUserInputEnvelope
+    set?: PopularShiftWhereUniqueInput | PopularShiftWhereUniqueInput[]
+    disconnect?: PopularShiftWhereUniqueInput | PopularShiftWhereUniqueInput[]
+    delete?: PopularShiftWhereUniqueInput | PopularShiftWhereUniqueInput[]
+    connect?: PopularShiftWhereUniqueInput | PopularShiftWhereUniqueInput[]
+    update?: PopularShiftUpdateWithWhereUniqueWithoutUserInput | PopularShiftUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PopularShiftUpdateManyWithWhereWithoutUserInput | PopularShiftUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PopularShiftScalarWhereInput | PopularShiftScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSessionsInput = {
@@ -13055,6 +13245,20 @@ export namespace Prisma {
     upsert?: StaffUpsertWithoutShiftsInput
     connect?: StaffWhereUniqueInput
     update?: XOR<XOR<StaffUpdateToOneWithWhereWithoutShiftsInput, StaffUpdateWithoutShiftsInput>, StaffUncheckedUpdateWithoutShiftsInput>
+  }
+
+  export type UserCreateNestedOneWithoutPopularShiftsInput = {
+    create?: XOR<UserCreateWithoutPopularShiftsInput, UserUncheckedCreateWithoutPopularShiftsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPopularShiftsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutPopularShiftsNestedInput = {
+    create?: XOR<UserCreateWithoutPopularShiftsInput, UserUncheckedCreateWithoutPopularShiftsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPopularShiftsInput
+    upsert?: UserUpsertWithoutPopularShiftsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPopularShiftsInput, UserUpdateWithoutPopularShiftsInput>, UserUncheckedUpdateWithoutPopularShiftsInput>
   }
 
   export type UserCreateNestedOneWithoutPublishedRostersInput = {
@@ -13469,6 +13673,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PopularShiftCreateWithoutUserInput = {
+    id?: string
+    startTime: Date | string
+    endTime: Date | string
+    hours: Decimal | DecimalJsLike | number | string
+    breakMinutes: Decimal | DecimalJsLike | number | string
+    color?: string | null
+  }
+
+  export type PopularShiftUncheckedCreateWithoutUserInput = {
+    id?: string
+    startTime: Date | string
+    endTime: Date | string
+    hours: Decimal | DecimalJsLike | number | string
+    breakMinutes: Decimal | DecimalJsLike | number | string
+    color?: string | null
+  }
+
+  export type PopularShiftCreateOrConnectWithoutUserInput = {
+    where: PopularShiftWhereUniqueInput
+    create: XOR<PopularShiftCreateWithoutUserInput, PopularShiftUncheckedCreateWithoutUserInput>
+  }
+
+  export type PopularShiftCreateManyUserInputEnvelope = {
+    data: PopularShiftCreateManyUserInput | PopularShiftCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SessionUpsertWithWhereUniqueWithoutUserInput = {
     where: SessionWhereUniqueInput
     update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
@@ -13596,6 +13828,35 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"PublishedRoster"> | Date | string
   }
 
+  export type PopularShiftUpsertWithWhereUniqueWithoutUserInput = {
+    where: PopularShiftWhereUniqueInput
+    update: XOR<PopularShiftUpdateWithoutUserInput, PopularShiftUncheckedUpdateWithoutUserInput>
+    create: XOR<PopularShiftCreateWithoutUserInput, PopularShiftUncheckedCreateWithoutUserInput>
+  }
+
+  export type PopularShiftUpdateWithWhereUniqueWithoutUserInput = {
+    where: PopularShiftWhereUniqueInput
+    data: XOR<PopularShiftUpdateWithoutUserInput, PopularShiftUncheckedUpdateWithoutUserInput>
+  }
+
+  export type PopularShiftUpdateManyWithWhereWithoutUserInput = {
+    where: PopularShiftScalarWhereInput
+    data: XOR<PopularShiftUpdateManyMutationInput, PopularShiftUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type PopularShiftScalarWhereInput = {
+    AND?: PopularShiftScalarWhereInput | PopularShiftScalarWhereInput[]
+    OR?: PopularShiftScalarWhereInput[]
+    NOT?: PopularShiftScalarWhereInput | PopularShiftScalarWhereInput[]
+    id?: StringFilter<"PopularShift"> | string
+    userId?: StringFilter<"PopularShift"> | string
+    startTime?: DateTimeFilter<"PopularShift"> | Date | string
+    endTime?: DateTimeFilter<"PopularShift"> | Date | string
+    hours?: DecimalFilter<"PopularShift"> | Decimal | DecimalJsLike | number | string
+    breakMinutes?: DecimalFilter<"PopularShift"> | Decimal | DecimalJsLike | number | string
+    color?: StringNullableFilter<"PopularShift"> | string | null
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id: string
     name: string
@@ -13608,6 +13869,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     staffs?: StaffCreateNestedManyWithoutUserInput
     publishedRosters?: PublishedRosterCreateNestedManyWithoutUserInput
+    popularShifts?: PopularShiftCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -13622,6 +13884,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     staffs?: StaffUncheckedCreateNestedManyWithoutUserInput
     publishedRosters?: PublishedRosterUncheckedCreateNestedManyWithoutUserInput
+    popularShifts?: PopularShiftUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -13652,6 +13915,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     staffs?: StaffUpdateManyWithoutUserNestedInput
     publishedRosters?: PublishedRosterUpdateManyWithoutUserNestedInput
+    popularShifts?: PopularShiftUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -13666,6 +13930,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     staffs?: StaffUncheckedUpdateManyWithoutUserNestedInput
     publishedRosters?: PublishedRosterUncheckedUpdateManyWithoutUserNestedInput
+    popularShifts?: PopularShiftUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -13680,6 +13945,7 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     staffs?: StaffCreateNestedManyWithoutUserInput
     publishedRosters?: PublishedRosterCreateNestedManyWithoutUserInput
+    popularShifts?: PopularShiftCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -13694,6 +13960,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     staffs?: StaffUncheckedCreateNestedManyWithoutUserInput
     publishedRosters?: PublishedRosterUncheckedCreateNestedManyWithoutUserInput
+    popularShifts?: PopularShiftUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -13724,6 +13991,7 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     staffs?: StaffUpdateManyWithoutUserNestedInput
     publishedRosters?: PublishedRosterUpdateManyWithoutUserNestedInput
+    popularShifts?: PopularShiftUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -13738,6 +14006,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     staffs?: StaffUncheckedUpdateManyWithoutUserNestedInput
     publishedRosters?: PublishedRosterUncheckedUpdateManyWithoutUserNestedInput
+    popularShifts?: PopularShiftUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutStaffsInput = {
@@ -13752,6 +14021,7 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     publishedRosters?: PublishedRosterCreateNestedManyWithoutUserInput
+    popularShifts?: PopularShiftCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStaffsInput = {
@@ -13766,6 +14036,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     publishedRosters?: PublishedRosterUncheckedCreateNestedManyWithoutUserInput
+    popularShifts?: PopularShiftUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStaffsInput = {
@@ -13830,6 +14101,7 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     publishedRosters?: PublishedRosterUpdateManyWithoutUserNestedInput
+    popularShifts?: PopularShiftUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStaffsInput = {
@@ -13844,6 +14116,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     publishedRosters?: PublishedRosterUncheckedUpdateManyWithoutUserNestedInput
+    popularShifts?: PopularShiftUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ShiftUpsertWithWhereUniqueWithoutStaffInput = {
@@ -13962,6 +14235,82 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UserCreateWithoutPopularShiftsInput = {
+    id: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    company?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    staffs?: StaffCreateNestedManyWithoutUserInput
+    publishedRosters?: PublishedRosterCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutPopularShiftsInput = {
+    id: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    company?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    staffs?: StaffUncheckedCreateNestedManyWithoutUserInput
+    publishedRosters?: PublishedRosterUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutPopularShiftsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPopularShiftsInput, UserUncheckedCreateWithoutPopularShiftsInput>
+  }
+
+  export type UserUpsertWithoutPopularShiftsInput = {
+    update: XOR<UserUpdateWithoutPopularShiftsInput, UserUncheckedUpdateWithoutPopularShiftsInput>
+    create: XOR<UserCreateWithoutPopularShiftsInput, UserUncheckedCreateWithoutPopularShiftsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutPopularShiftsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPopularShiftsInput, UserUncheckedUpdateWithoutPopularShiftsInput>
+  }
+
+  export type UserUpdateWithoutPopularShiftsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    staffs?: StaffUpdateManyWithoutUserNestedInput
+    publishedRosters?: PublishedRosterUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPopularShiftsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    company?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    staffs?: StaffUncheckedUpdateManyWithoutUserNestedInput
+    publishedRosters?: PublishedRosterUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserCreateWithoutPublishedRostersInput = {
     id: string
     name: string
@@ -13974,6 +14323,7 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     staffs?: StaffCreateNestedManyWithoutUserInput
+    popularShifts?: PopularShiftCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPublishedRostersInput = {
@@ -13988,6 +14338,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     staffs?: StaffUncheckedCreateNestedManyWithoutUserInput
+    popularShifts?: PopularShiftUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPublishedRostersInput = {
@@ -14018,6 +14369,7 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     staffs?: StaffUpdateManyWithoutUserNestedInput
+    popularShifts?: PopularShiftUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPublishedRostersInput = {
@@ -14032,6 +14384,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     staffs?: StaffUncheckedUpdateManyWithoutUserNestedInput
+    popularShifts?: PopularShiftUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type SessionCreateManyUserInput = {
@@ -14079,6 +14432,15 @@ export namespace Prisma {
     id?: string
     weekStart: Date | string
     createdAt?: Date | string
+  }
+
+  export type PopularShiftCreateManyUserInput = {
+    id?: string
+    startTime: Date | string
+    endTime: Date | string
+    hours: Decimal | DecimalJsLike | number | string
+    breakMinutes: Decimal | DecimalJsLike | number | string
+    color?: string | null
   }
 
   export type SessionUpdateWithoutUserInput = {
@@ -14222,6 +14584,33 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     weekStart?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PopularShiftUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    hours?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    breakMinutes?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PopularShiftUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    hours?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    breakMinutes?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PopularShiftUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    hours?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    breakMinutes?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    color?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ShiftCreateManyStaffInput = {

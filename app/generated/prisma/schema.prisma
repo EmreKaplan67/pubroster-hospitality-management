@@ -23,6 +23,7 @@ model User {
   accounts         Account[]
   staffs           Staff[]
   publishedRosters PublishedRoster[]
+  popularShifts    PopularShift[]
 
   @@unique([email])
   @@map("user")
@@ -144,11 +145,15 @@ model Shift {
 
 model PopularShift {
   id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   startTime    DateTime
   endTime      DateTime
   hours        Decimal  @db.Decimal(4, 2)
   breakMinutes Decimal  @db.Decimal(5, 2)
   color        String?  @default("#e5e7eb")
+
+  @@index([userId])
 }
 
 model PublishedRoster {

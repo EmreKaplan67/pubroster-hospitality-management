@@ -40,7 +40,9 @@ export default async function SchedulePage({
       orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
       select: { id: true, name: true, email: true },
     }),
-    prisma.popularShift.findMany(),
+    prisma.popularShift.findMany({
+      where: { userId: session.user.id },
+    }),
     prisma.shift.findMany({
       where: {
         staff: { userId: session.user.id },
